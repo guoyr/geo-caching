@@ -16,6 +16,6 @@ class ImageTransferResource(Resource):
 
 def get_image_factory():
     resource = Resource()
-    resource.putChild('image', ImageTransferResource())
+    resource.putChild('upload_image', ImageTransferResource())
     factory = Site(resource)
     return factory
