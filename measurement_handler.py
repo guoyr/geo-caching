@@ -10,7 +10,7 @@ class MeasurementResource(Resource):
         request.setHeader("content-type", "application/json")
         result = {"east_latency":"1.004", "west_latency":"2.056"}
         print "measurement get"
-        return json.dumps(result)
+        return json.dumps([result])
 
     def render_POST(self, request):
         request.setHeader("content-type", "application/json")
