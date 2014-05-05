@@ -9,8 +9,6 @@ class StoreProtocol(AMP):
         return {"msg": "server received msg"}
 
 
-
-
-
 class StoreFactory(Factory):
     protocol=StoreProtocol
+
