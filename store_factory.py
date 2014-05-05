@@ -5,7 +5,7 @@ class StoreProtocol(AMP):
 
 	@Transfer.responder
 	def transfer(self, msg):
-		#TODO: download the file
+		#TODO: retrieve the file
 		return {"msg": "server received msg"}
 
 
