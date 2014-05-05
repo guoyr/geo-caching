@@ -3,14 +3,14 @@ from twisted.internet.protocol import Factory
 from store_command import *
 class StoreProtocol(AMP):
 
-	@Transfer.responder
-	def transfer(self, msg):
-		#TODO: retrieve the file
-		return {"msg": "server received msg"}
+    @Transfer.responder
+    def transfer(self, msg):
+        #TODO: retrieve the file
+        return {"msg": "server received msg"}
 
 
 
 
 
 class StoreFactory(Factory):
-	protocol=StoreProtocol
+    protocol=StoreProtocol
