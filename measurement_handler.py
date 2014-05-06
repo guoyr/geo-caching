@@ -29,7 +29,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def sendLatencyInfo(self, latency_dict):
         print "send latency info"
-        latency_dict = {"east_latency":"%.2f" % (random.random()*10+1), "west_latency":"%.2f" % (random.random()*10+2)}
+        latency_dict = {"east_latency":"%.2f" % (random.random()*10+1), "west_latency":"%.2f" % (random.random()*10+2), "user_x":str(29.724795), "user_y":str(-95.361466)}
         self.sendMessage(json.dumps(latency_dict), False)
 
     def onClose(self, wasClean, code, reason):
@@ -40,7 +40,7 @@ class MeasurementResource(Resource):
 
     def render_GET(self, request):
         request.setHeader("content-type", "application/json")
-        result = {"east_latency":"1.004", "west_latency":"2.056"}
+        result = {"east_latency":"1.004", "west_latency":"2.056", "user_location_x":""}
         print "measurement get"
         return json.dumps([result])
 
