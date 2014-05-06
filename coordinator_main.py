@@ -23,7 +23,7 @@ def main():
     measurement_factory.protocol = LatencyMeasurementProtocol
 
     measurement_endpoint =  TCP4ServerEndpoint(reactor, http_measurement_port)
-    measurement_endpoint.listen(measurement_factory)    
+    measurement_endpoint.listen(measurement_factory)        
 
     log.startLogging(sys.stdout)
     reactor.run()

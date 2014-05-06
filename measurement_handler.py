@@ -1,18 +1,21 @@
 #handles image transfers
+import json
+import random
+
 from twisted.web.resource import Resource
 from twisted.web.server import Site
 from twisted.internet.task import LoopingCall
 
 from autobahn.twisted.websocket import WebSocketServerProtocol
 
-import json
+
 
 class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def onConnect(self, request):
         print "Client connecting: {0}".format(request.peer)
         lc = LoopingCall(self.sendLatencyInfo,None)
-        lc.start(10)
+        lc.start(3)
 
     def onOpen(self):
         print "WebSocket connection open."
@@ -26,7 +29,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def sendLatencyInfo(self, latency_dict):
         print "send latency info"
-        latency_dict = {"east_latency":"1.004", "west_latency":"2.056"}
+        latency_dict = {"east_latency":"%.2f" % random.random()*10+1, "west_latency":"%.2f" % random.random()*10+2}
         self.sendMessage(json.dumps(latency_dict), False)
 
     def onClose(self, wasClean, code, reason):

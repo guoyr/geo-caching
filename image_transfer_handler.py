@@ -53,8 +53,28 @@ class ImageTransferResource(Resource):
 
         # assume iamge is unique, check is on client
         save_image(image, image_name, user, latency_dict)
-        return json.dumps(["image saved"])
+        # return json.dumps(["image saved"])
+        # call done at end of save_image
+        return NOT_DONE_YET
 
+
+    def save_image(self, image, name, user, latency_dict, request):
+        # check if master
+        d = FactoryManager().get_coordinator_client_deferred()
+
+        def check_coordinator(protocol):
+            return protocol.callRemote(GetMaster, USER_UID_KEY=user)
+
+        d1 = d.addCallback(check_coordinator(protocol))
+
+        def parse_master_id(response):
+            master_id = response[MASTER_SERVER_ID]
+
+        d1.addCallback(parse_master_id)
+
+        add_to_LRU_cache(image, name, user)
+        # save to master
+        return 
 
     def _send_open_file(self, request, openFile):
         '''Use FileSender to asynchronously send an open file
@@ -73,23 +93,7 @@ class ImageTransferResource(Resource):
 
 # IMAGE METHODS
 
-def save_image(image, name, user, latency_dict):
-    # check if master
-    d = FactoryManager().get_coordinator_client_deferred()
 
-    def check_coordinator(protocol):
-        return protocol.callRemote(GetMaster, USER_UID_KEY=user)
-
-    d1 = d.addCallback(check_coordinator(protocol))
-
-    def parse_master_id(response):
-        master_id = response[MASTER_SERVER_ID]
-
-    d1.addCallback(parse_master_id)
-
-    add_to_LRU_cache(image, name, user)
-    # save to master
-    return 
 
 def get_image(name,user):
 # get the gridout object of stored file by _id.
