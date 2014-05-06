@@ -52,7 +52,7 @@ class ImageTransferResource(Resource):
         latency_dict = json.load(latency_dict_raw)
 
         # assume iamge is unique, check is on client
-        save_image(image, image_name, user, latency_dict)
+        save_image(image, image_name, user, latency_dict, request)
         # return json.dumps(["image saved"])
         # call done at end of save_image
         return NOT_DONE_YET
@@ -63,6 +63,7 @@ class ImageTransferResource(Resource):
         d = FactoryManager().get_coordinator_client_deferred()
 
         def check_coordinator(protocol):
+            #add_image_rec
             return protocol.callRemote(GetMaster, USER_UID_KEY=user)
 
         d1 = d.addCallback(check_coordinator(protocol))
@@ -70,11 +71,14 @@ class ImageTransferResource(Resource):
         def parse_master_id(response):
             master_id = response[MASTER_SERVER_ID]
 
+            request.write(json.dumps(["upload complete"]))
+            request.finish()
+
         d1.addCallback(parse_master_id)
 
         add_to_LRU_cache(image, name, user)
         # save to master
-        return 
+        return NOT_DONE_YET
 
     def _send_open_file(self, request, openFile):
         '''Use FileSender to asynchronously send an open file
