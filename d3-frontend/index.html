@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.background {
+  fill: none;
+  pointer-events: all;
+}
+
+.button {
+	position: absolute;
+	fill: blue;
+	opacity: 0.5;
+	width: 60px;
+	height: 45px;
+}
+
+#states {
+  fill: #aaa;
+}
+
+#state-borders {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.5px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script>
+
+
+var width = 960,
+    height = 500;
+
+var svg_width = width + 200;
+
+var projection = d3.geo.albersUsa()
+    .scale(1070)
+    .translate([width / 2, height / 2]);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var zoom = d3.behavior.zoom()
+    .translate(projection.translate())
+    .scale(projection.scale())
+    .scaleExtent([height, 8 * height])
+    //.on("zoom", zoomed);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", svg_width)
+    .attr("height", height);
+
+var g = svg.append("g")
+    .call(zoom);
+
+
+
+g.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height);
+
+var json_data = null;
+
+d3.json("latency_file.json", function(error, data) {
+	if (error) return console.warn(error);
+	json_data = data;
+	console.log(json_data.latency + " " + json_data.timestamp);
+});		
+
+d3.json("us.json", function(error, us) {
+  g.append("g")
+      .attr("id", "states")
+    .selectAll("path")
+      .data(topojson.feature(us, us.objects.states).features)
+    .enter().append("path")
+      .attr("d", path)
+      .on("click", clicked);
+
+  g.append("path")
+      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .attr("id", "state-borders")
+      .attr("d", path);
+});
+
+var offsetX = 0;
+var offsetY = 0;
+var wp = svg.append("circle")
+    .attr("cx", width*0.15)
+    .attr("cy", height*0.45)
+    .attr("r", 5)
+		.attr("opacity", 0)
+    .style("fill", "steelblue");
+
+var ep = svg.append("circle")
+		.attr("cx", width*0.78)
+		.attr("cy", height*0.48)
+		.attr("r", 5)
+		.attr("opacity", 0)
+		.style("fill", "steelblue");
+
+	
+var wp_to_ep_move = svg.append("rect")
+    .attr("x", width+50)
+    .attr("y", height/8)
+    .attr("width", 50)
+    .attr("height",25)
+    .attr("fill", "blue")
+    .on("click", transfer_from_wp_to_ep);
+
+var ep_to_wp_move = svg.append("rect")
+		.attr("x", width+50)
+		.attr("y", height/8+60)
+		.attr("width", 50)
+		.attr("height",25)
+		.attr("fill", "blue")
+		.on("click", transfer_from_ep_to_wp);
+
+var blaunch = svg.append("rect")
+		.attr("class", "button")
+		.attr("x", width+50)
+		.attr("y", height/8 + 120)
+    .attr("width", 55)
+    .attr("height",25)
+		.attr("rx", 5)
+		.attr("ry", 5)
+		.on("click", launch_server);
+		
+svg.append("text").text("button")
+		.attr("x", blaunch.attr("x")*1.005)
+		.attr("y", blaunch.attr("y")*1.12)
+		.attr("fill", "black");
+
+function launch_server() {
+	console.log("launch_server() was called");
+	svg.selectAll("circle").transition()
+		.duration(700)
+		.attr("opacity", "1");
+}
+	
+function transfer_from_wp_to_ep() { 
+				wimg.transition()
+					.duration(500)
+					.style("opacity", 1)
+					.transition()
+					.duration(json_data.latency)
+					.attr("transform", "translate("+(ep.attr("cx")-wp.attr("cx")+offsetX)+", 						"+(ep.attr("cy")-wp.attr("cy")+offsetY)+")")
+					.transition()
+					.duration(500)
+					.style("opacity", 0);
+			}
+
+
+
+		  var wimg = svg.append("image")
+		           .attr("xlink:href", "photo_icon.png")
+		           .attr("x", wp.attr("cx"))
+		           .attr("y", wp.attr("cy"))
+		           .attr("width", 25)
+		           .attr("height", 25);
+		 wimg.attr("opacity", 0.0);
+		 
+var eimg = svg.append("image")
+					.attr("id","1")
+			   	.attr("xlink:href", "photo_icon.png")
+					.attr("x", ep.attr("cx"))
+					.attr("y", ep.attr("cy"))
+					.attr("width", 25)
+					.attr("height", 25)
+eimg.attr("opacity", 1.0);
+						
+
+
+
+			
+function transfer_from_ep_to_wp() { 
+				eimg.transition()
+					.duration(json_data.timestamp)
+					.attr("transform", "translate("+(wp.attr("cx")-ep.attr("cx")+offsetX)+", 						"+(wp.attr("cy")-ep.attr("cy")+offsetY)+")"); 
+}
+
+
+function clicked(d) {
+  var centroid = path.centroid(d),
+      translate = projection.translate();
+			/* translate offset update */
+  		offsetX = translate[0] - centroid[0];
+  		offsetY = translate[1] - centroid[1];
+
+  projection.translate([
+    translate[0] - centroid[0] + width / 2,
+    translate[1] - centroid[1] + height / 2
+  ]);
+
+  // var res = zoom.translate(projection.translate());
+  g.selectAll("path").transition()
+      .duration(500)	
+      .attr("d", path);
+  svg.selectAll("circle").transition()
+      .duration(500)
+      .attr("transform", function(d){ return "translate("+offsetX+", "+offsetY+")"; });
+	svg.selectAll("image").transition()
+		  .duration(500)
+		  .attr("transform", function(d){ return "translate("+offsetX+", "+offsetY+")"; });
+}
+
+function zoomed() {
+  projection.translate(d3.event.translate).scale(d3.event.scale);
+  g.selectAll("path").attr("d", path);
+}
+
+</script>
