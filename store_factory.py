@@ -4,7 +4,7 @@ from twisted.web.client import Agent, readBody
 
 from store_commands import *
 from constants import *
-from image_transfer_handler import save_image_master
+from image_transfer_handler import fetch_image, save_image_master
 
 
 class StoreProtocol(AMP):
@@ -17,26 +17,7 @@ class StoreProtocol(AMP):
 
     @SendSingleImageInfo.responder
     def receive_image(self, user, store_name, image_name):
-
-        from twisted.internet import reactor    
-        agent = Agent(reactor)
-
-        uri = "http://"+store_name+"-5412.cloudapp.net:"+str(HTTP_PORT)+"/image/"
-        args = "?%s=%s&%s=%s&%s=%d" %(IMAGE_UID_KEY, image_name, USER_UID_KEY, user, IS_CLIENT_KEY, 0)
-
-        print uri+args
-
-        d = agent.request('GET', uri+args, None, None)
-
-        def image_received(response):
-            d = readBody(response)
-            d.addCallback(cbBody)
-
-        def cbBody(image):
-            save_image_master(image, image_name, user)
-
-        d.addCallback(image_received)
-
+        fetch_image(store_name, image_name, user, save_image_master, image_name, user)
         return {"success":True}
 
 class StoreFactory(Factory):
