@@ -47,11 +47,11 @@ class FactoryManager(object):
 
 	def get_store_client_deferred(self):
 		from twisted.internet import reactor
-		return TCP4ClientEndpoint(reactor, self.other_server_loc, store_amp_port).connect(StoreFactory())
+		return TCP4ClientEndpoint(reactor, self.other_server_loc, self.store_amp_port).connect(StoreFactory())
 
 	def get_coordinator_client_deferred(self):
 		from twisted.internet import reactor
-		return TCP4ClientEndpoint(reactor, self.client_db_loc, coordinator_amp_port).connect(CoordinatorFactory())
+		return TCP4ClientEndpoint(reactor, self.client_db_loc, self.coordinator_amp_port).connect(CoordinatorFactory())
 
 
 
