@@ -62,6 +62,7 @@ class ImageTransferResource(Resource):
         # check if master
         d = FactoryManager().get_coordinator_client_deferred()
 
+
         def check_coordinator(protocol):
             #add_image_rec
             return protocol.callRemote(GetMaster, USER_UID_KEY=user)
@@ -70,6 +71,7 @@ class ImageTransferResource(Resource):
 
         def parse_master_id(response):
             master_id = response[MASTER_SERVER_ID]
+            save_image_to_master(master_id, image, name, user)
 
             request.write(json.dumps(["upload complete"]))
             request.finish()
@@ -112,10 +114,25 @@ def get_image(name,user):
 
 # HELPER METHODS
 
-def save_image_to_master(master_id):
+def save_image_to_master(master_id, image, name, user):
     if master_id == SERVER_ID:
-        # I am the master, don't do anything
-        pass
+        # I am the master, save the image to master collection without the cache size limitation
+        db = connect_image_info_db()
+        fs = connect_image_fs()
+
+        uid = fs.put(image)
+        time = datetime.datetime.now()
+        image_info = {
+            "name":name,
+            "gridfs_uid":uid,
+            "user_uid":user,
+            "last_used_time":time,
+            "creation_time":time,
+            "views":0
+        }
+        db[user].insert(image_info)
+    else :
+        
 
 def connect_image_fs():
     db = MongoClient().image_db
