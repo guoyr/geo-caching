@@ -33,6 +33,7 @@ class ImageTransferResource(Resource):
         user = request.args[USER_UID_KEY][0]
         is_client = int(request.args[IS_CLIENT_KEY][0])
         image = get_image(image_name, user)
+        #TODO: add latency
 
         if is_client:
             d = FactoryManager().get_coordinator_client_deferred()
@@ -75,7 +76,7 @@ class ImageTransferResource(Resource):
         image_name = request.args[IMAGE_UID_KEY][0]
         image = request.args[image_name][0]
         user = request.args[USER_UID_KEY][0]
-
+        #TODO: add latency for measurement
         # assume iamge is unique, check is on client
         # check if master
         d = FactoryManager().get_coordinator_client_deferred()

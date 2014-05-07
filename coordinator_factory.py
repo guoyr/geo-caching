@@ -12,7 +12,7 @@ class CoordinatorProtocol(AMP):
     @GetMaster.responder
     def getMaster(self, USER_UID_KEY):
     	#TODO
-    	master_id = ""
+    	master_id = "WEST"
     	return {MASTER_SERVER_ID, master_id}
 
 class CoordinatorFactory(Factory):
