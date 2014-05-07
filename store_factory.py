@@ -4,7 +4,7 @@ from twisted.web.client import Agent, readBody
 
 from store_commands import *
 from constants import *
-from image_transfer_handler import fetch_image, save_image_master
+from image_transfer_handler import fetch_image
 
 
 class StoreProtocol(AMP):
@@ -17,7 +17,7 @@ class StoreProtocol(AMP):
 
     @SendSingleImageInfo.responder
     def receive_image(self, user, store_name, image_name):
-        fetch_image(store_name, image_name, user, save_image_master, image_name, user)
+        fetch_image(store_name, image_name, user, True)
         return {"success":True}
 
 class StoreFactory(Factory):

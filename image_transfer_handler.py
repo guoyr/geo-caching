@@ -36,36 +36,38 @@ class ImageTransferResource(Resource):
 
         if is_client:
             d = FactoryManager().get_coordinator_client_deferred()
+
+            #add access record first
             def add_access_record(protocol):
                 return protocol.callRemote(AddAccessRecord, USER_UID_KEY=user, PREFERRED_STORE_KEY=SERVER_ID, IS_SAVE_ACTION=False)
             d.addCallback(add_access_record)
+            
             if image:
                 #cache has image
                 send_open_file(image, request)
-                return NOT_DONE_YET
             else:
-                #cache doesn't have image
-                pass   
+                #image doesn't exist on cache, try get it on master
+                d = FactoryManager().get_coordinator_client_deferred()
+
+                def check_coordinator(protocol):
+                    #add_image_rec
+                    return protocol.callRemote(GetMaster, USER_UID_KEY=user)
+
+                def parse_master_id(response):
+                    master_id = response[MASTER_SERVER_ID]
+                    fetch_image(master_id, image_name, user, request)
+
+                d1 = d.addCallback(check_coordinator)
+                d1.addCallback(parse_master_id)
+
         else:
             #cache request image from master
             if image:
                 send_open_file(image, request)
             else:
                 print "Error: master should always have image"
-      
-            #image doesn't exist on cache, try get it on master
-            d = FactoryManager().get_coordinator_client_deferred()
 
-            def check_coordinator(protocol):
-                #add_image_rec
-                return protocol.callRemote(GetMaster, USER_UID_KEY=user)
-
-            def parse_master_id(response):
-                master_id = response[MASTER_SERVER_ID]
-                fetch_image(master_id, image_name, user, send_open_file, request)
-
-            d1 = d.addCallback(check_coordinator)
-            d1.addCallback(parse_master_id)
+        return NOT_DONE_YET            
 
     def render_POST(self, request):
         request.setHeader("content-type", "application/json")
@@ -73,14 +75,35 @@ class ImageTransferResource(Resource):
         image_name = request.args[IMAGE_UID_KEY][0]
         image = request.args[image_name][0]
         user = request.args[USER_UID_KEY][0]
-        latency_dict_raw = request.args[LATENCY_DICT_KEY]
-        
-        # array of server keys are latency values
-        latency_dict = json.load(latency_dict_raw)
 
         # assume iamge is unique, check is on client
-        save_image(image, image_name, user, latency_dict, request)
+        # check if master
+        d = FactoryManager().get_coordinator_client_deferred()
 
+        #add the record first
+        def add_access_record(protocol):
+            return protocol.callRemote(AddAccessRecord, USER_UID_KEY=user, PREFERRED_STORE_KEY=SERVER_ID, IS_SAVE_ACTION=True)
+        d.addCallback(add_access_record)
+
+        def check_coordinator(protocol):
+            #add_image_rec
+            return protocol.callRemote(GetMaster, USER_UID_KEY=user)
+
+        d1 = d.addCallback(check_coordinator)
+
+        def parse_master_id(response):
+            master_id = response[MASTER_SERVER_ID]
+
+            if master_id == SERVER_ID:
+                save_image_master(image, name, user)
+            else:
+                save_image_LRU_cache(image, name, user)
+                request_master_image_download(master_id, name, user)
+
+            request.write(json.dumps(["upload complete"]))
+            request.finish()
+
+        d1.addCallback(parse_master_id)
         # call done at end of save_image
         return NOT_DONE_YET
 
@@ -122,36 +145,6 @@ def save_image_master(image, name, user):
     }
     db[user].insert(image_info)
 
-def save_image(image, name, user, latency_dict, request, sendToRequest):
-    # check if master
-    d = FactoryManager().get_coordinator_client_deferred()
-
-
-    def check_coordinator(protocol):
-        #add_image_rec
-        return protocol.callRemote(GetMaster, USER_UID_KEY=user)
-
-    d1 = d.addCallback(check_coordinator)
-
-    def parse_master_id(response):
-        master_id = response[MASTER_SERVER_ID]
-
-        if master_id == SERVER_ID:
-            save_image_master(image, name, user)
-        else:
-            save_image_LRU_cache(image, name, user)
-            request_master_image_download(master_id, name, user)
-
-        request.write(json.dumps(["upload complete"]))
-        request.finish()
-
-    d1.addCallback(parse_master_id)
-
-    def add_access_record(protocol):
-        return protocol.callRemote(AddAccessRecord, USER_UID_KEY=user, PREFERRED_STORE_KEY=SERVER_ID, IS_SAVE_ACTION=True)
-
-    d.addCallback(add_access_record)
-
 def save_image_LRU_cache(image, image_name, user):
     db = connect_image_info_db()
     fs = connect_image_fs()
@@ -188,7 +181,7 @@ def send_open_file(openFile, request):
     dd.addCallback(cbFinished)
 
 #callback function where first argument is always the image
-def fetch_image(store_name, image_name, user, callback, *args):
+def fetch_image(store_name, image_name, user, isMaster, request=None):
     from twisted.internet import reactor    
     agent = Agent(reactor)
 
@@ -202,7 +195,15 @@ def fetch_image(store_name, image_name, user, callback, *args):
         d.addCallback(cbBody)
 
     def cbBody(image):
-        callback(image, *args)
+        if isMaster:
+            #image retrieved from cache
+            save_image_master(image, image_name, user)
+        else:
+            #image requested by client and retrieved from master
+            #save image
+            #send image
+            save_image_LRU_cache(image, image_name, user)
+            send_open_file(image, request)
 
     d.addCallback(image_received)
 
