@@ -1,6 +1,12 @@
 from twisted.protocols.amp import AMP
 from twisted.internet.protocol import Factory
-from store_command import *
+from twisted.web.client import Agent, readBody
+
+from store_commands import *
+from constants import *
+from image_transfer_handler import save_image_master
+
+
 class StoreProtocol(AMP):
 
     @Transfer.responder
@@ -9,6 +15,60 @@ class StoreProtocol(AMP):
         return {"msg": "server received msg"}
 
 
+    @SendSingleImageInfo.responder
+    def receive_image(self, user, store_name, image_name):
+
+        from twisted.internet import reactor    
+        agent = Agent(reactor)
+
+        uri = "http://"+store_name+"-5412.cloudapp.net:"+str(HTTP_PORT)+"/image/"
+        args = "?%s=%s&%s=%s&%s=%d" %(IMAGE_UID_KEY, image_name, USER_UID_KEY, user, IS_CLIENT_KEY, 0)
+
+        print uri+args
+
+        d = agent.request('GET', uri+args, None, None)
+
+        def image_received(response):
+            d = readBody(response)
+            d.addCallback(cbBody)
+
+        def cbBody(image):
+            save_image_master(image, image_name, user)
+
+        d.addCallback(image_received)
+
+        return {"success":True}
+
 class StoreFactory(Factory):
     protocol=StoreProtocol
 
+def main():
+    from twisted.internet import reactor    
+    agent = Agent(reactor)
+
+    uri = "http://localhost:"+str(HTTP_PORT)+"/image/"
+
+    args = "?%s=%s&%s=%s&%s=%d" %(IMAGE_UID_KEY, "1d0a0cde6aea6ad997307f01edd5c60b", USER_UID_KEY, "", IS_CLIENT_KEY, 0)
+
+    print uri+args
+
+    d = agent.request('GET', uri+args, None, None)
+
+    def image_received(response):
+        print vars(response)
+        d = readBody(response)
+        d.addCallback(cbBody)
+
+    def cbBody(body):
+        print 'Response body:'
+        f = open("test_image_2.jpg","wb")
+        f.write(body)
+        f.close()
+
+    d.addCallback(image_received)
+
+    reactor.run()
+
+
+if __name__ == '__main__':
+    main()

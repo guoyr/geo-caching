@@ -12,12 +12,10 @@ from settings import *
 from constants import *
 def main():
 
-    http_port = 8666
-
     #connection to client_db
 
     from twisted.internet import reactor
-    image_transfer_endpoint = TCP4ServerEndpoint(reactor, http_port)
+    image_transfer_endpoint = TCP4ServerEndpoint(reactor, HTTP_PORT)
     image_transfer_endpoint.listen(get_image_factory())
 
     if SERVER_ID == COORDINATOR_ID:

@@ -29,7 +29,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def sendLatencyInfo(self, latency_dict):
         print "send latency info"
-        latency_dict = {"east_latency":"%.2f" % (random.random()*10+1), "west_latency":"%.2f" % (random.random()*10+2), "user_x":str(29.724795), "user_y":str(-95.361466)}
+        latency_dict = {"east_latency":"%.2f" % (random.random()*10+1), "west_latency":"%.2f" % (random.random()*10+2), "user_x":str(-95.361466), "user_y":str(29.724795)}
         self.sendMessage(json.dumps(latency_dict), False)
 
     def onClose(self, wasClean, code, reason):
