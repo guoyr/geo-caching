@@ -1,6 +1,7 @@
 from twisted.protocols.amp import AMP
 from twisted.internet.protocol import Factory
 from coordinator_commands import *
+from pymongo import MongoClient
 
 class CoordinatorProtocol(AMP):
 
@@ -34,5 +35,8 @@ class CoordinatorProtocol(AMP):
             record_db.save(user_record)
         return {"success": True}
 
+    def connect_user_record_db():
+        db = MongoClient().record_db
+        return record_db
 class CoordinatorFactory(Factory):
     protocol=CoordinatorProtocol
