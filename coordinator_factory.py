@@ -17,7 +17,6 @@ class CoordinatorProtocol(AMP):
 
     @AddAccessRecord.responder
     def addRecord(self, preferred_store, is_save):
-        pass
         return {"success": True}
 
 class CoordinatorFactory(Factory):

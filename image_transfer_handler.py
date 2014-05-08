@@ -40,10 +40,9 @@ class ImageTransferResource(Resource):
 
             #add access record first
             def add_access_record(protocol):
-                print "in add_access_record"
                 return protocol.callRemote(AddAccessRecord, USER_UID_KEY=user, PREFERRED_STORE_KEY=SERVER_ID, IS_SAVE_ACTION=False)
             d.addCallback(add_access_record)
-            
+            sys.stdout.flush()
             if image:
                 #cache has image
                 send_open_file(image, request)
@@ -85,7 +84,9 @@ class ImageTransferResource(Resource):
 
         #add the record first
         def add_access_record(protocol):
+
             return protocol.callRemote(AddAccessRecord, USER_UID_KEY=user, PREFERRED_STORE_KEY=SERVER_ID, IS_SAVE_ACTION=True)
+
         d.addCallback(add_access_record)
 
         def check_coordinator(protocol):

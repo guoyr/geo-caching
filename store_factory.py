@@ -21,6 +21,7 @@ class StoreProtocol(AMP):
 class StoreFactory(Factory):
     protocol=StoreProtocol
 
+
 def main():
     from twisted.internet import reactor    
     agent = Agent(reactor)
