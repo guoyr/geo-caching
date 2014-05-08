@@ -80,22 +80,26 @@ class ImageTransferResource(Resource):
         #TODO: add latency for measurement
         # assume image is unique, check is on client
         # check if master
+        print(image_name)
+        print(user)
         d = FactoryManager().get_coordinator_client_deferred()
-
+        print("get deffered")
         #add the record first
         def add_access_record(protocol):
-
+            print("add access record")
             return protocol.callRemote(AddAccessRecord, USER_UID_KEY=user, PREFERRED_STORE_KEY=SERVER_ID, IS_SAVE_ACTION=True)
 
         d.addCallback(add_access_record)
 
         def check_coordinator(protocol):
             #add_image_rec
+            print("check coordinator")
             return protocol.callRemote(GetMaster, USER_UID_KEY=user)
 
         d1 = d.addCallback(check_coordinator)
 
         def parse_master_id(response):
+            print("parse master_id")
             master_id = response[MASTER_SERVER_ID]
 
             if master_id == SERVER_ID:
