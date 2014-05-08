@@ -80,40 +80,48 @@ class ImageTransferResource(Resource):
         #TODO: add latency for measurement
         # assume image is unique, check is on client
         # check if master
-        print(image_name)
-        print(user)
+        print("image name" + image_name)
+        print("user" + user)
         d = FactoryManager().get_coordinator_client_deferred()
-        print("get deffered")
+        print("get deferred")
         #add the record first
         def add_access_record(protocol):
             print("add access record")
+            print(protocol)
             return protocol.callRemote(AddAccessRecord, user_id=user, preferred_store=SERVER_ID, is_save=True)
 
         d.addCallback(add_access_record)
 
-        def check_coordinator(protocol):
+        def check_coordinator(response):
             #add_image_rec
             print("check coordinator")
-            return protocol.callRemote(GetMaster, user_id=user)
+            print(type(response))
+            d = FactoryManager().get_coordinator_client_deferred()
+            
+            def c(protocol):
+                return protocol.callRemote(GetMaster, user_id=user)
+            d.addCallback(c)
+
+            def parse_master_id(response):
+                print("parse master_id")
+                master_id = response[MASTER_SERVER_ID]
+                if master_id == SERVER_ID:
+                    print "is master"
+                    # save_image_master(image, name, user)
+                else:
+                    print "not master"
+                    # save_image_LRU_cache(image, name, user)
+                    # request_master_image_download(master_id, name, user)
+
+                request.write(json.dumps(["upload complete"]))
+                request.finish()
+
+            d.addCallback(parse_master_id)
+
+
 
         d1 = d.addCallback(check_coordinator)
 
-        def parse_master_id(response):
-            print("parse master_id")
-            master_id = response[MASTER_SERVER_ID]
-
-            if master_id == SERVER_ID:
-                print "is master"
-                save_image_master(image, name, user)
-            else:
-                print "not master"
-                save_image_LRU_cache(image, name, user)
-                request_master_image_download(master_id, name, user)
-
-            request.write(json.dumps(["upload complete"]))
-            request.finish()
-
-        d1.addCallback(parse_master_id)
         # call done at end of save_image
         return NOT_DONE_YET
 
