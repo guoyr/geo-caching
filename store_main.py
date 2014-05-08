@@ -18,10 +18,7 @@ def main():
     image_transfer_endpoint = TCP4ServerEndpoint(reactor, HTTP_PORT)
     image_transfer_endpoint.listen(get_image_factory())
 
-    if SERVER_ID == COORDINATOR_ID:
-        FactoryManager().start_coordinator_server()
-    else:
-        FactoryManager().start_store_server()
+    FactoryManager().start_store_server()
 
     # TODO: listen to HTTP and AMP server
     log.startLogging(sys.stdout)

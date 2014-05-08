@@ -10,10 +10,15 @@ class CoordinatorProtocol(AMP):
         pass
 
     @GetMaster.responder
-    def getMaster(self, USER_UID_KEY):
+    def getMaster(self, user_id):
     	#TODO
     	master_id = "WEST"
     	return {MASTER_SERVER_ID, master_id}
+
+    @AddAccessRecord.responder
+    def addRecord(self, preferred_store, is_save):
+        pass
+        return {"success": True}
 
 class CoordinatorFactory(Factory):
     protocol=CoordinatorProtocol

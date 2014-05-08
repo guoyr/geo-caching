@@ -18,12 +18,12 @@ class FactoryManager(object):
 		return cls._instance
 
 	def __init__(self):
-		self.client_db_loc = "clientdb-5412.cloudapp.net"
+		self.client_db_loc = "http://clientdb-5412.cloudapp.net"
 
 		if SERVER_ID == "WEST":
-			self.other_server_loc = "east-5412.cloudapp.net"
+			self.other_server_loc = "http://east-5412.cloudapp.net"
 		elif SERVER_ID == "EAST":
-			self.other_server_loc = "west-5412.cloudapp.net"
+			self.other_server_loc = "http://west-5412.cloudapp.net"
 
 		self.store_amp_port = 8750
 		self.coordinator_amp_port = 8760

@@ -11,6 +11,7 @@ from autobahn.twisted.websocket import WebSocketServerFactory
 
 from measurement_handler import LatencyMeasurementProtocol
 
+from factory_manager import FactoryManager
 
 def main():
 
@@ -18,12 +19,13 @@ def main():
 
     http_measurement_port = 8888
 
-
     measurement_factory = WebSocketServerFactory()
     measurement_factory.protocol = LatencyMeasurementProtocol
 
     measurement_endpoint =  TCP4ServerEndpoint(reactor, http_measurement_port)
-    measurement_endpoint.listen(measurement_factory)        
+    measurement_endpoint.listen(measurement_factory)   
+
+    FactoryManager().start_coordinator_server()
 
     log.startLogging(sys.stdout)
     reactor.run()

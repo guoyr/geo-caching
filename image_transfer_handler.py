@@ -40,6 +40,7 @@ class ImageTransferResource(Resource):
 
             #add access record first
             def add_access_record(protocol):
+                print "in add_access_record"
                 return protocol.callRemote(AddAccessRecord, USER_UID_KEY=user, PREFERRED_STORE_KEY=SERVER_ID, IS_SAVE_ACTION=False)
             d.addCallback(add_access_record)
             
@@ -76,8 +77,9 @@ class ImageTransferResource(Resource):
         image_name = request.args[IMAGE_UID_KEY][0]
         image = request.args[image_name][0]
         user = request.args[USER_UID_KEY][0]
+
         #TODO: add latency for measurement
-        # assume iamge is unique, check is on client
+        # assume image is unique, check is on client
         # check if master
         d = FactoryManager().get_coordinator_client_deferred()
 
@@ -96,8 +98,10 @@ class ImageTransferResource(Resource):
             master_id = response[MASTER_SERVER_ID]
 
             if master_id == SERVER_ID:
+                print "is master"
                 save_image_master(image, name, user)
             else:
+                print "not master"
                 save_image_LRU_cache(image, name, user)
                 request_master_image_download(master_id, name, user)
 
