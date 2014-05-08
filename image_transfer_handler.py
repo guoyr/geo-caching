@@ -108,7 +108,7 @@ class ImageTransferResource(Resource):
                 master_id = response[MASTER_SERVER_ID]
                 if master_id == SERVER_ID:
                     print "is master"
-                    save_image_master(image, image_sname, user)
+                    save_image_master(image, image_name, user)
                 else:
                     print "not master"
                     # save_image_LRU_cache(image, name, user)
@@ -161,6 +161,7 @@ def save_image_master(image, name, user):
         "views":0
     }
     db[user].insert(image_info)
+    print ("image stored in master: " SERVER_ID)
 
 def save_image_LRU_cache(image, image_name, user):
     db = connect_image_info_db()
