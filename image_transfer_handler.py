@@ -145,7 +145,7 @@ def get_image(name,user):
     time = datetime.datetime.now()
     image_info["views"] = image_info["views"] + 1
     image_info["last_used_time"] = time
-    info_db[user].update(image_info)
+    info_db[user].save(image_info)
     print ("picture: " + str(uid) + " viewed " + str(image_info['views']) + " times. Last used time: " + str(image_info['last_used_time']))
     return f
 
@@ -167,7 +167,7 @@ def save_image_master(image, name, user):
         "creation_time":time,
         "views":0
     }
-    db[user].insert(image_info)
+    db[user].save(image_info)
     print ("image stored in master: " +  SERVER_ID)
 
 def save_image_LRU_cache(image, image_name, user):
@@ -189,7 +189,7 @@ def save_image_LRU_cache(image, image_name, user):
         "creation_time": time,
         "views": 0
     }
-    db[user].insert(image_info)
+    db[user].save(image_info)
 
 def send_open_file(openFile, request):
     '''Use FileSender to asynchronously send an open file
