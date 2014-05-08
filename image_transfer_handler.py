@@ -94,7 +94,7 @@ class ImageTransferResource(Resource):
         def check_coordinator(protocol):
             #add_image_rec
             print("check coordinator")
-            return protocol.callRemote(GetMaster, USER_UID_KEY=user)
+            return protocol.callRemote(GetMaster, user_id=user)
 
         d1 = d.addCallback(check_coordinator)
 
