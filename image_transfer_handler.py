@@ -161,7 +161,7 @@ def save_image_master(image, name, user):
         "views":0
     }
     db[user].insert(image_info)
-    print ("image stored in master: " SERVER_ID)
+    print ("image stored in master: " +  SERVER_ID)
 
 def save_image_LRU_cache(image, image_name, user):
     db = connect_image_info_db()
