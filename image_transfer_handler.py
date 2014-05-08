@@ -108,7 +108,7 @@ class ImageTransferResource(Resource):
                 master_id = response[MASTER_SERVER_ID]
                 if master_id == SERVER_ID:
                     print "is master"
-                    save_image_master(image, name, user)
+                    save_image_master(image, image_sname, user)
                 else:
                     print "not master"
                     # save_image_LRU_cache(image, name, user)
