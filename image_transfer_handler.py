@@ -45,6 +45,7 @@ class ImageTransferResource(Resource):
             sys.stdout.flush()
             if image:
                 #cache has image
+                #TODO: update image access time
                 send_open_file(image, request)
             else:
                 #image doesn't exist on cache, try get it on master
@@ -107,7 +108,7 @@ class ImageTransferResource(Resource):
                 master_id = response[MASTER_SERVER_ID]
                 if master_id == SERVER_ID:
                     print "is master"
-                    # save_image_master(image, name, user)
+                    save_image_master(image, name, user)
                 else:
                     print "not master"
                     # save_image_LRU_cache(image, name, user)
@@ -118,9 +119,7 @@ class ImageTransferResource(Resource):
 
             d.addCallback(parse_master_id)
 
-
-
-        d1 = d.addCallback(check_coordinator)
+        d.addCallback(check_coordinator)
 
         # call done at end of save_image
         return NOT_DONE_YET
