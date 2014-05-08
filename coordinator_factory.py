@@ -16,7 +16,7 @@ class CoordinatorProtocol(AMP):
     	return {MASTER_SERVER_ID, master_id}
 
     @AddAccessRecord.responder
-    def addRecord(self, preferred_store, is_save):
+    def addRecord(self, user_id, preferred_store, is_save):
         print("received request of client")
         return {"success": True}
 
