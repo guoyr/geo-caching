@@ -14,7 +14,7 @@ class CoordinatorProtocol(AMP):
     	#TODO
         print "received request for getMaster"
     	master_id = "WEST"
-    	return {MASTER_SERVER_ID, master_id}
+    	return {MASTER_SERVER_ID: master_id}
 
     @AddAccessRecord.responder
     def addRecord(self, user_id, preferred_store, is_save):
