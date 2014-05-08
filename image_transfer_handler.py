@@ -143,7 +143,7 @@ def get_image(name,user):
 
     #update the views and the last_used_time
     time = datetime.datetime.now()
-    image_info["views"] = image_info["view"] + 1
+    image_info["views"] = image_info["views"] + 1
     image_info["last_used_time"] = time
     print ("picture: " + uid + " viewed " + image_info["views"] + " times. Last used time: " + image_info["last_used_time"])
     return f
