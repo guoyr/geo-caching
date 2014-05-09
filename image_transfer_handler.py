@@ -53,7 +53,7 @@ class ImageTransferResource(Resource):
 
                 def check_coordinator(protocol):
                     #add_image_rec
-                    return protocol.callRemote(GetMaster, USER_UID_KEY=user)
+                    return protocol.callRemote(GetMaster, user_id=user)
 
                 def parse_master_id(response):
                     master_id = response[MASTER_SERVER_ID]
