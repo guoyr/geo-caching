@@ -9,6 +9,9 @@ WEST_STORE_ID = "WEST"
 EAST_STORE_ID = "EAST"
 COORDINATOR_ID = "COORDINATOR"
 
+CLIENT_LATENCY_WEST_KEY = "latency_west"
+CLIENT_LATENCY_EAST_KEY = "latency_east"
+
 PREFERRED_STORE_KEY = "preferred_store"
 IS_CLIENT_KEY = "is_client"
 IS_SAVE_ACTION = "is_save"
