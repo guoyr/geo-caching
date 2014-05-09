@@ -22,25 +22,53 @@ class CoordinatorProtocol(AMP):
         # if no user ID, is called by server to send latency
         print("received request for addRecord")
         print("is_save:" + str(is_save))
-        if user_id:
-            record_db = self.connect_user_record_db()
-            user_record = record_db["records"].find_one({"uid":user_id})
-            if not user_record:
-                user_record = {
-                    "uid":user_id,
-                    "preferred_store":preferred_store,
-                    "is_save":is_save
-                }
-                record_db["records"].save(user_record)
+        record_db = self.connect_user_record_db()
+        user_record = record_db["records"].find_one({"uid":user_id})
+        if not user_record:
+            user_record = {
+                "uid":user_id,
+                "preferred_store":preferred_store,
+                "master":preferred_store,
+                "nearest_access":1,
+                "master_access":1,
+                "is_save":is_save
+            }
+            record_db["records"].save(user_record)
+        else:
+            if(preferred_store == user_record["master"]):
+                if(user_record["preferred_store"] != preferred_store):
+                    user_record["preferred_store"] = preferred_store
+                    user_record["nearest_access"] = 1
+                    user_record["master_access"] += 1
+                else:
+                    user_record["nearest_access"] += 1
+                    user_record["master_access"] += 1
             else:
-                user_record["preferred_store"] = preferred_store
-                user_record["is_save"] = is_save
-                record_db["records"].save(user_record)
+                #is this condition happening?
+                if(user_record["preferred_store"] != preferred_store):
+                    user_record["preferred_store"] = preferred_store
+                    user_record["nearest_access"] = 1
+                else:
+                    user_record["nearest_access"] += 1
+
+
+                #change master should happen if this condition met
+                if(user_record["nearest_access"] > user_record["master_access"]):
+                    #change the master loc
+                    #initiate change_master action
+
+            user_record["is_save"] = is_save
+
+
+            record_db["records"].save(user_record)
         return {"success": True}
 
     def connect_user_record_db(self):
         db = MongoClient().record_db
         return db
-        
+    
+    def changeMaster(self, ):
+        return
+
 class CoordinatorFactory(Factory):
     protocol=CoordinatorProtocol
