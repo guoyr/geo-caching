@@ -35,7 +35,7 @@ class CoordinatorProtocol(AMP):
             record_db["records"].save(user_record)
         return {"success": True}
 
-    def connect_user_record_db():
+    def connect_user_record_db(self):
         db = MongoClient().record_db
         return record_db
         
