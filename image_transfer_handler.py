@@ -32,6 +32,7 @@ class ImageTransferResource(Resource):
         image_name = request.args[IMAGE_UID_KEY][0]
         user = request.args[USER_UID_KEY][0]
         is_client = int(request.args[IS_CLIENT_KEY][0])
+        print request.args
         w_latency = float(request.args[CLIENT_LATENCY_WEST_KEY])
         e_latency = float(request.args[CLIENT_LATENCY_EAST_KEY])
         image = get_image(image_name, user)
