@@ -37,7 +37,7 @@ class CoordinatorProtocol(AMP):
 
     def connect_user_record_db(self):
         db = MongoClient().record_db
-        return record_db
+        return db
         
 class CoordinatorFactory(Factory):
     protocol=CoordinatorProtocol
