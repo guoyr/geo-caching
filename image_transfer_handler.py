@@ -32,6 +32,8 @@ class ImageTransferResource(Resource):
         image_name = request.args[IMAGE_UID_KEY][0]
         user = request.args[USER_UID_KEY][0]
         is_client = int(request.args[IS_CLIENT_KEY][0])
+        w_latency = float(request.args[CLIENT_LATENCY_WEST_KEY])
+        e_latency = float(request.args[CLIENT_LATENCY_EAST_KEY])
         image = get_image(image_name, user)
         #TODO: add latency
 
@@ -40,7 +42,7 @@ class ImageTransferResource(Resource):
 
             #add access record first
             def add_access_record(protocol):
-                return protocol.callRemote(AddAccessRecord, user_id=user, preferred_store=SERVER_ID, is_save=False)
+                return protocol.callRemote(AddAccessRecord, user_id=user, preferred_store=SERVER_ID, is_save=False, latency_west=w_latency, latency_east=e_latency)
             d.addCallback(add_access_record)
             sys.stdout.flush()
             if image:
@@ -221,7 +223,7 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
     agent = Agent(reactor)
     print("agent created")
     uri = "http://"+store_name+"-5412.cloudapp.net:"+str(HTTP_PORT)+"/image/"
-    args = "?%s=%s&%s=%s&%s=%d" %(IMAGE_UID_KEY, image_name, USER_UID_KEY, user, IS_CLIENT_KEY, 0)
+    args = "?%s=%s&%s=%s&%s=%d&%s=%f&%s=%f" %(IMAGE_UID_KEY, image_name, USER_UID_KEY, user, IS_CLIENT_KEY, 0, CLIENT_LATENCY_EAST_KEY, 0.1, CLIENT_LATENCY_WEST_KEY, 0.1)
     d = agent.request('GET', uri+args, None, None)
     print("request made")
     def image_received(response):
