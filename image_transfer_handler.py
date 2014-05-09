@@ -49,7 +49,7 @@ class ImageTransferResource(Resource):
             if image:
                 #cache has image
                 #TODO: update image access time
-                "cache has the image, now sending..."
+                print "cache has the image, now sending..."
                 send_open_file(image, request)
             else:
                 d = FactoryManager().get_coordinator_client_deferred()
@@ -77,7 +77,7 @@ class ImageTransferResource(Resource):
         else:
             #cache request image from master
             if image:
-                "sending image to non-client..."
+                print "sending image to non-client..."
                 send_open_file(image, request)
             else:
                 print "Error: master should always have image"
@@ -209,7 +209,7 @@ def send_open_file(openFile, request):
     '''Use FileSender to asynchronously send an open file
 
     [JBY] From: http://stackoverflow.com/questions/1538617/http-download-very-big-file'''
-    print("starting trasnferring file")
+    print("starting trasnferring file...")
     dd = FileSender().beginFileTransfer(openFile, request)
 
     def cbFinished(ignored):
