@@ -48,11 +48,12 @@ class ImageTransferResource(Resource):
             if image:
                 #cache has image
                 #TODO: update image access time
+                "cache has the image, now sending..."
                 send_open_file(image, request)
             else:
                 d = FactoryManager().get_coordinator_client_deferred()
                 #image doesn't exist on cache, try get it on master
-                print("image does not exist")
+                print("image does not exist, trying to get from master...")
                 def check_coordinator(protocol):
 
                     #add_image_rec
@@ -75,6 +76,7 @@ class ImageTransferResource(Resource):
         else:
             #cache request image from master
             if image:
+                "sending image to non-client..."
                 send_open_file(image, request)
             else:
                 print "Error: master should always have image"
@@ -227,7 +229,9 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
     d = agent.request('GET', uri+args, None, None)
     print("request made")
     def image_received(response):
+        print "cache trying to receive image"
         d = readBody(response)
+        print "cache received image"
         d.addCallback(cbBody)
 
     def cbBody(image):
