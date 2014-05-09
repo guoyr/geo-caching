@@ -19,7 +19,7 @@ from store_commands import *
 from factory_manager import FactoryManager
 from settings import *
 from constants import *
-
+from twisted.web.client import Agent, readBody
 
 CACHE_SIZE = 5
 
