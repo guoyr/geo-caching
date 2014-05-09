@@ -203,7 +203,7 @@ def send_open_file(openFile, request):
     '''Use FileSender to asynchronously send an open file
 
     [JBY] From: http://stackoverflow.com/questions/1538617/http-download-very-big-file'''
-
+    print("starting trasnferring file")
     dd = FileSender().beginFileTransfer(openFile, request)
 
     def cbFinished(ignored):
