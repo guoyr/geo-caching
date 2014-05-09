@@ -236,7 +236,8 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
             #save image
             #send image
             save_image_LRU_cache(image, image_name, user)
-            send_open_file(image, request)
+            serving_image = get_image(image_name, user)
+            send_open_file(serving_image, request)
 
     d.addCallback(image_received)
 
