@@ -20,19 +20,19 @@ class CoordinatorProtocol(AMP):
     @AddAccessRecord.responder
     def addRecord(self, user_id, preferred_store, is_save):
         print("received request for addRecord")
-        record_db = connect_user_record_db()
-        user_record = record_db.find_one({"uid":user_id})
+        record_db] = connect_user_record_db()
+        user_record = record_db["records"].find_one({"uid":user_id})
         if not user_record:
             user_record = {
                 "uid":user_id,
                 "preferred_store":preferred_store,
                 "is_save":is_save
             }
-            record_db.save(user_record)
+            record_db["records"].save(user_record)
         else:
             user_record["preferred_store"] = preferred_store
             user_record["is_save"] = is_save
-            record_db.save(user_record)
+            record_db["records"].save(user_record)
         return {"success": True}
 
     def connect_user_record_db():
