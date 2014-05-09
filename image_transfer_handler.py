@@ -221,7 +221,6 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
     print("agent created")
     uri = "http://"+store_name+"-5412.cloudapp.net:"+str(HTTP_PORT)+"/image/"
     args = "?%s=%s&%s=%s&%s=%d" %(IMAGE_UID_KEY, image_name, USER_UID_KEY, user, IS_CLIENT_KEY, 0)
-    rint
     d = agent.request('GET', uri+args, None, None)
     print("request made")
     def image_received(response):
