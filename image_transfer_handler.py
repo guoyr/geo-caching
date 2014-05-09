@@ -63,7 +63,8 @@ class ImageTransferResource(Resource):
                     def parse_master_id(response):
                         print("cache parse master id")
                         master_id = response[MASTER_SERVER_ID]
-                        fetch_image(master_id, image_name, user, request)
+                        print("master: " + str(master_id))
+                        fetch_image(master_id, image_name, user, False, request)
 
                     d.addCallback(parse_master_id)
 
