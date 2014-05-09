@@ -97,6 +97,7 @@ class ImageTransferResource(Resource):
         def add_access_record(protocol):
             print("add access record")
             print(protocol)
+            sys.stdout.flush()
             return protocol.callRemote(AddAccessRecord, user_id=user, preferred_store=SERVER_ID, is_save=True)
 
         d.addCallback(add_access_record)
