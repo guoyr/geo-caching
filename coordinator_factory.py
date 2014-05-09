@@ -20,7 +20,7 @@ class CoordinatorProtocol(AMP):
     @AddAccessRecord.responder
     def addRecord(self, user_id, preferred_store, is_save):
         print("received request for addRecord")
-        record_db = connect_user_record_db()
+        record_db = self.connect_user_record_db()
         user_record = record_db["records"].find_one({"uid":user_id})
         if not user_record:
             user_record = {
@@ -38,5 +38,6 @@ class CoordinatorProtocol(AMP):
     def connect_user_record_db():
         db = MongoClient().record_db
         return record_db
+        
 class CoordinatorFactory(Factory):
     protocol=CoordinatorProtocol
