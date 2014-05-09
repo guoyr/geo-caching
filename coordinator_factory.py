@@ -55,6 +55,12 @@ class CoordinatorProtocol(AMP):
                 #change master should happen if this condition met
                 if(user_record["nearest_access"] > user_record["master_access"]):
                     #change the master loc
+                    user_record["master"] =  preferred_store
+                    user_record["master_access"] = 1
+                    user_record["preferred_store"] = preferred_store
+                    iser_record["nearest_access"] = 1
+                    self.changeMaster()
+
                     #initiate change_master action
 
             user_record["is_save"] = is_save
@@ -67,7 +73,7 @@ class CoordinatorProtocol(AMP):
         db = MongoClient().record_db
         return db
     
-    def changeMaster(self, ):
+    def changeMaster(self, new_master, user_id):
         return
 
 class CoordinatorFactory(Factory):
