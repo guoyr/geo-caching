@@ -48,19 +48,26 @@ class ImageTransferResource(Resource):
                 #TODO: update image access time
                 send_open_file(image, request)
             else:
-                #image doesn't exist on cache, try get it on master
                 d = FactoryManager().get_coordinator_client_deferred()
-
+                #image doesn't exist on cache, try get it on master
+                print("image does not exist")
                 def check_coordinator(protocol):
+
                     #add_image_rec
-                    return protocol.callRemote(GetMaster, user_id=user)
+                    d = FactoryManager().get_coordinator_client_deferred()
+            
+                    def c(protocol):
+                        return protocol.callRemote(GetMaster, user_id=user)
+                    d.addCallback(c)
 
-                def parse_master_id(response):
-                    master_id = response[MASTER_SERVER_ID]
-                    fetch_image(master_id, image_name, user, request)
+                    def parse_master_id(response):
+                        print("cache parse master id")
+                        master_id = response[MASTER_SERVER_ID]
+                        fetch_image(master_id, image_name, user, request)
 
-                d1 = d.addCallback(check_coordinator)
-                d1.addCallback(parse_master_id)
+                    d.addCallback(parse_master_id)
+
+                d.addCallback(check_coordinator)
 
         else:
             #cache request image from master
