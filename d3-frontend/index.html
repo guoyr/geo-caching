@@ -99,7 +99,7 @@
                     .attr("cy", user_location[1])
                     .attr("fill", "green")
                     .attr("r", 10);
-                    
+
                     user_location = projection([parseFloat(json_data.user_x), parseFloat(json_data.user_y)]);
                     user_point
                         .transition()
@@ -107,15 +107,11 @@
                         .attr("cx", user_location[0])
                         .attr("cy", user_location[1])
                         .each("end", function(){
-                            
+                            transfer_image(eval(json_data.from_key), eval(json_data.to_key));
                          });
                 } else {
                     transfer_image(eval(json_data.from_key), eval(json_data.to_key));
                 }
-                
-
-                console.log("posx : " + user_point.attr("cx"));
-
             }
 
             socket.onclose = function(e) {
