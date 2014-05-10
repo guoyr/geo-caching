@@ -232,7 +232,7 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
 
     # cache fetch to master
     def add_access_record(protocol):
-        return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key="", preferred_store=SERVER_ID, is_save=False, latency_key=SERVER_LATENCY, from_key="other", to_key=SERVER_ID)
+        return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, is_save=False, latency_key=SERVER_LATENCY, from_key="other", to_key=SERVER_ID)
     d.addCallback(add_access_record)
 
     from twisted.internet import reactor    
