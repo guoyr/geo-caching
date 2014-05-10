@@ -37,7 +37,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
         callTime = 0
         for userID in LatencyCache.keys():
             for from_key, to_key, latency in LatencyCache[userID]:
-
+                pass
 
         self.sendMessage(json.dumps(), False)
 
