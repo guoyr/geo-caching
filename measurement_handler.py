@@ -52,13 +52,13 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
                 info["latency"] = str(latency)
                 info["user_x"] = str(x)
                 info["user_y"] = str(y)
-                reactor.callLater(callTime, self.sendMessage, json.dumps(info), False)
+                reactor.callLater(callTime, self.sendM, json.dumps(info), False)
                 callTime += latency/100
         LatencyCache.clear()
 
-    def sendMessage(self, *args, **kwargs):
+    def sendM(self, *args, **kwargs):
         print "calling sendmessage"
-        super(LatencyMeasurementProtocol,self).sendMessage(*args, **kwargs)
+        self.sendMessage(*args, **kwargs)
 
     def _getUserCoords(self, from_key, to_key):
         #seattle and ithaca
