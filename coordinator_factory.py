@@ -70,9 +70,10 @@ class CoordinatorProtocol(AMP):
         #parse latency information
         if user_uid_key:
             # user to server
-            pass
+            LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
         else:
             # server to server, use from_key to determine to_key
+            LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
             pass
         print "will return success"
         return {"success": True}

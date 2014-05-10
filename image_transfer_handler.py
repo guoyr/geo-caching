@@ -76,11 +76,6 @@ class ImageTransferResource(Resource):
             #cache request image from master
             if image:
                 print "sending image to non-client..."
-                d = FactoryManager().get_coordinator_client_deferred()
-
-                def add_access_record(protocol):
-                    return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key="", preferred_store=SERVER_ID, is_save=False, latency_key=latency, to_key="other", from_key=SERVER_ID)
-                d.addCallback(add_access_record)
 
                 send_open_file(image, request)
             else:
@@ -226,7 +221,14 @@ def send_open_file(openFile, request):
     dd.addCallback(cbFinished)
 
 def fetch_image(store_name, image_name, user, isMaster, request=None):
-    print("cache trying to fetch image")
+    print("cache trying to fetch image from master")
+
+    d = FactoryManager().get_coordinator_client_deferred()
+
+    def add_access_record(protocol):
+        return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key="", preferred_store=SERVER_ID, is_save=False, latency_key=300, from_key="other", to_key=SERVER_ID)
+    d.addCallback(add_access_record)
+
     from twisted.internet import reactor    
     agent = Agent(reactor)
     print("agent created")
