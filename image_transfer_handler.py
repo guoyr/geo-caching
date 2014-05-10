@@ -189,7 +189,7 @@ def save_image_LRU_cache(image, image_name, user):
     db = connect_image_info_db()
     fs = connect_image_fs()
 
-    if db[user].count() >= CACHE_SIZE:
+    if db[user].count() > CACHE_SIZE:
         image_info = db[user].find().sort({"last_used_time",1}).limit(1)
         fs.delete(image_info["gridfs_uid"])
         db[user].delete(image_info["_id"])
