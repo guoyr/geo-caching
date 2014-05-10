@@ -87,15 +87,20 @@ class CoordinatorProtocol(AMP):
         db = MongoClient().record_db
         return db
     
-    def changeMaster(self, new_master, user_uid_key):
+    def changeMaster(self, old_master, new_master, user):
 
         #notify the servers and prepare them for the change action
         #update the image_info db of the new master's image
         #let the new master download all the old master's image
         from factory_manager import FactoryManager
         #get two deferred for each server
-        d_lsit = FactoryManager.get_store_client_deferred
-        return 
+        d_lsit = FactoryManager.get_store_client_deferred()
+
+        def notify_new_master(prtocol):
+            return protocol.callRemote(PrepareMasterChange, is_new_master=True, user_uid_key=user)
+        
+        def notify_old_master(protocol):
+            return protocol.callRemote(PrepareMasterChange, is_new_master=False, user_uid_key=user)
 
 class CoordinatorFactory(Factory):
     protocol=CoordinatorProtocol

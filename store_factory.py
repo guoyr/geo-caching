@@ -19,6 +19,10 @@ class StoreProtocol(AMP):
         closeConnection(self.transport)
         return {"success":True}
 
+    @PrepareMasterChange.responder
+    def prepare_change(self):
+        return {"prepared":True}
+
 class StoreFactory(Factory):
     protocol=StoreProtocol
 

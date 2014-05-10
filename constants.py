@@ -23,8 +23,12 @@ PREFERRED_STORE_KEY = "preferred_store"
 IS_CLIENT_KEY = "is_client"
 IS_SAVE_ACTION = "is_save"
 
+
+IS_NEW_MASTER = "is_new_master"
+
 HTTP_PORT = 8666
 HTTP_MEASUREMENT_PORT = 8888
+
 
 TIMEOUT = 10
 
