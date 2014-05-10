@@ -50,6 +50,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
                 info["user_y"] = str(y)
                 reactor.callLater(callTime, self.sendMessage, json.dumps(info), False)
                 callTime += latency/100
+        LatencyCache.clear()
 
     def _getUserCoords(self, from_key, to_key):
         #seattle and ithaca
@@ -65,7 +66,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
             self.prevUserY = y
             self.prevUserX = x
 
-        return self.prevUserY, self.prevUserY
+        return self.prevUserX, self.prevUserY
 
     def onClose(self, wasClean, code, reason):
         print "WebSocket connection closed: {0}".format(reason)

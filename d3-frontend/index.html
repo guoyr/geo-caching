@@ -98,7 +98,7 @@
                 console.log("data information" + e.data);
                 json_data = JSON.parse(e.data);
                 console.log(json_data.user_x + " " + json_data.user_y);
-                user_location = projection([json_data.user_x, json_data.user_y]);
+                user_location = projection([parseFloat(json_data.user_x), parseFloat(json_data.user_y)]);
                 user_point
                     .transition()
                     .duration(500)
