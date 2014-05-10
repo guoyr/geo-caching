@@ -22,6 +22,9 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
     def onOpen(self):
         print "WebSocket connection open."
 
+    def onClose(self, wasClean, code, reason):
+       print("WebSocket connection closed: {0}".format(reason))
+
     def onMessage(self, payload, isBinary):
         if isBinary:
             print "Binary message received: {0} bytes".format(len(payload))
@@ -38,7 +41,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
         for userID in LatencyCache.keys():
             callTime = 0.0
             print "send latency for user: "  + userID
-            for from_key, to_key, latency in LatencyCache[userID]:
+            for from_key, to_key, latency in reversed(LatencyCache[userID]):
                 print "animation from " + from_key + "to " + to_key + "latency " + str(latency)
                 info = {}
                 x, y = self._getUserCoords(from_key, to_key)
