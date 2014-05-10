@@ -6,8 +6,8 @@ class FetchData(amp.Command):
     response = [('msg',amp.String())]
 
 class AddAccessRecord(amp.Command):
-	arguments = [(USER_UID_KEY, amp.String()), (PREFERRED_STORE_KEY, amp.String()), (IS_SAVE_ACTION, amp.Boolean()), (CLIENT_LATENCY_WEST_KEY, amp.Float()), (CLIENT_LATENCY_EAST_KEY, amp.Float())]
-	response = [("success", amp.Boolean())]
+    arguments = [(USER_UID_KEY, amp.String()), (PREFERRED_STORE_KEY, amp.String()), (IS_SAVE_ACTION, amp.Boolean()), (CLIENT_LATENCY_WEST_KEY, amp.Float()), (CLIENT_LATENCY_EAST_KEY, amp.Float())]
+    response = [("success", amp.Boolean())]
 
 class GetMaster(amp.Command):
     arguments = [(USER_UID_KEY,amp.String())]

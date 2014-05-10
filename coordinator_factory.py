@@ -73,6 +73,8 @@ class CoordinatorProtocol(AMP):
         return db
     
     def changeMaster(self, new_master, user_id):
+        #notify the servers and prepare them for the change action
+        #
         
         return 
 
