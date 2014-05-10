@@ -20,6 +20,7 @@ class CoordinatorProtocol(AMP):
     @AddAccessRecord.responder
     def addRecord(self, image_uid_key, user_id, preferred_store, is_save, latency_key, from_key, to_key):
         # if no user ID, is called by server to send latency
+        print "received request"
         if user_id:
             print("received request for addRecord")
             print("is_save:" + str(is_save))
@@ -73,7 +74,7 @@ class CoordinatorProtocol(AMP):
         else:
             # server to server, use from_key to determine to_key
             pass
-
+        print "will return success"
         return {"success": True}
 
     def connect_user_record_db(self):
