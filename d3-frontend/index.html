@@ -205,8 +205,9 @@
     function transfer_image(src, dest) { 
         counter += 1;
         var currCounter = counter;
+        console.log("counter1"+currCounter)
         var label = svg.append("text").text(json_data.latency)
-        .attr("id", "image_with_label"+counter)
+        .attr("id", "image_with_label"+currCounter)
         .attr("font-family", "sans-serif")
         .attr("font-size", "12px")
         .attr("x", parseInt(src.attr("cx"))+50)
@@ -216,7 +217,7 @@
         console.log(label.attr("id"));
 
         var nameLabel = svg.append("text").text("image_name")
-        .attr("id", "image_with_label"+counter)
+        .attr("id", "image_with_label"+currCounter)
         .attr("font-family", "sans-serif")
         .attr("font-size", "12px")
         .attr("x", parseInt(src.attr("cx"))+50)
@@ -225,14 +226,14 @@
         .attr("fill", "black");
 
         var img = svg.append("image")
-        .attr("id", "image_with_label"+counter)
+        .attr("id", "image_with_label"+currCounter)
         .attr("xlink:href", "photo_icon.png")
         .attr("x", src.attr("cx"))
         .attr("y", src.attr("cy"))
         .attr("width", 48)
         .attr("height", 48)
         .style("opacity", 0.0);
-
+        console.log("counter2"+currCounter)
         svg.selectAll("#image_with_label"+currCounter)
         .transition()
         .duration(200)
