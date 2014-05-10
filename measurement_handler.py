@@ -30,7 +30,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
         # self.sendMessage(json.dumps(payload), isBinary)
 
     def sendLatencyInfo(self):
-        print "send latency info"
+        print "in send latency info"
         locs_dict = {"EAST":"ep","WEST":"wp","CLIENT":"user_point"}
         # hack to determine usr location
 
@@ -38,6 +38,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
         for userID in LatencyCache.keys():
             callTime = 0.0
+            print "send latency for user: "  + userID
             for from_key, to_key, latency in LatencyCache[userID]:
                 info = {}
                 x, y = self._getUserCoords(from_key, to_key)
@@ -56,7 +57,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
         server = ""
         if "CLIENT" == from_key: server = to_key 
         elif "CLIENT" == to_key: server = from_key
-        
+
         if server:
             x = user_coords[server][0]
             y = user_coords[server][1]
