@@ -13,9 +13,9 @@ class StoreProtocol(AMP):
         return {"msg": "server received msg"}
 
     @SendSingleImageInfo.responder
-    def receive_image(self, user, store_name, image_name):
+    def receive_image(self, user_uid_key, cache_uid_key, image_uid_key):
         from image_transfer_handler import fetch_image
-        fetch_image(store_name, image_name, user, True)
+        fetch_image(cache_uid_key, image_uid_key, user_uid_key, True)
         closeConnection(self.transport)
         return {"success":True}
 
