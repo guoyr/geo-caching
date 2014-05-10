@@ -19,7 +19,7 @@ class CoordinatorProtocol(AMP):
     def addRecord(self, image_uid_key, user_uid_key, preferred_store, is_save, latency_key, from_key, to_key):
         # piggyback latency information here
         # if no user ID, is called by server to send latency
-        print "received request"
+        print "received request for add record"
         if user_uid_key:
             print("received request for addRecord")
             print("is_save:" + str(is_save))
