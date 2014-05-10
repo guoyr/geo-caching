@@ -52,9 +52,11 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def _getUserCoords(from_key, to_key):
         #seattle and ithaca
-        user_coords = {"WEST":[-122.3331,47.6097]. "EAST": [-76.5000, 42.4433]}
+        user_coords = {"WEST":[-122.3331,47.6097], "EAST": [-76.5000, 42.4433]}
         server = ""
-        if "CLIENT" == from_key: server = to_key elif "CLIENT" == to_key: server = from_key
+        if "CLIENT" == from_key: server = to_key 
+        elif "CLIENT" == to_key: server = from_key
+        
         if server:
             x = user_coords[server][0]
             y = user_coords[server][1]
