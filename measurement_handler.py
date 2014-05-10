@@ -39,9 +39,9 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
         from twisted.internet import reactor
 
         for userID in LatencyCache.keys():
-            callTime = 0.0
+            callTime = 0.1
             print "send latency for user: "  + userID
-            for from_key, to_key, latency in reversed(LatencyCache[userID]):
+            for from_key, to_key, latency in reversedLatencyCache[userID]:
                 print "animation from " + from_key + "to " + to_key + "latency " + str(latency)
                 info = {}
                 x, y = self._getUserCoords(from_key, to_key)
