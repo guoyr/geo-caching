@@ -53,7 +53,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
                 info["user_x"] = str(x)
                 info["user_y"] = str(y)
                 reactor.callLater(callTime, self.sendM, json.dumps(info), False)
-                callTime += latency/100
+                callTime += latency/10
         LatencyCache.clear()
 
     def sendM(self, *args, **kwargs):
