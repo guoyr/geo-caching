@@ -93,6 +93,7 @@ class CoordinatorProtocol(AMP):
         #update the image_info db of the new master's image
         #let the new master download all the old master's image
         from factory_manager import FactoryManager
+        #get two deferred for each server
         d_lsit = FactoryManager.get_store_client_deferred
         return 
 
