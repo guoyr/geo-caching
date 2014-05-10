@@ -161,7 +161,7 @@ def get_image(name,user):
     image_info["last_used_time"] = time
     info_db[user].save(image_info)
     print ("picture: " + str(uid) + " viewed " + str(image_info['views']) + " times. Last used time: " + str(image_info['last_used_time']))
-    return f.read()
+    return f
 
 
 # HELPER METHODS
