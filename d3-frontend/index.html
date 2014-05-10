@@ -238,7 +238,7 @@
         .duration(200)
         .style("opacity", 0.9)
         .transition()
-        .duration(json_data.latency*10)
+        .duration(json_data.latency*100)
         .attr("transform", "translate("+(dest.attr("cx")-src.attr("cx")+offsetX)+",                         "+(dest.attr("cy")-src.attr("cy")+offsetY)+")")
         .transition()
         .duration(200)

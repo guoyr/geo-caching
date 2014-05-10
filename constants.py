@@ -31,6 +31,7 @@ HTTP_MEASUREMENT_PORT = 8888
 
 
 TIMEOUT = 10
+SERVER_LATENCY = 90
 
 #LRU cache for latency
 LatencyCache = defaultdict(list)
