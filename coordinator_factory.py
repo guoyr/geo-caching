@@ -18,7 +18,7 @@ class CoordinatorProtocol(AMP):
     	return {MASTER_SERVER_ID: master_id}
 
     @AddAccessRecord.responder
-    def addRecord(self, user_id, preferred_store, is_save):
+    def addRecord(self, user_id, preferred_store, is_save, latency_west, latency_east):
         print("received request for addRecord")
         print("is_save:" + str(is_save))
         record_db = self.connect_user_record_db()

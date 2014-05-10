@@ -14,7 +14,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def onConnect(self, request):
         print "Client connecting: {0}".format(request.peer)
-        lc = LoopingCall(self.factory.protocol.sendLatencyInfo,self.factory.protocol)
+        lc = LoopingCall(self.sendLatencyInfo,None)
         lc.start(3)
 
     def onOpen(self):

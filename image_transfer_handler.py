@@ -90,7 +90,8 @@ class ImageTransferResource(Resource):
         image_name = request.args[IMAGE_UID_KEY][0]
         image = request.args[image_name][0]
         user = request.args[USER_UID_KEY][0]
-
+        w_latency = float(request.args[CLIENT_LATENCY_WEST_KEY])
+        e_latency = float(request.args[CLIENT_LATENCY_EAST_KEY])
         #TODO: add latency for measurement
         # assume image is unique, check is on client
         # check if master
@@ -98,12 +99,13 @@ class ImageTransferResource(Resource):
         print("user" + user)
         d = FactoryManager().get_coordinator_client_deferred()
         print("get deferred")
+
         #add the record first
         def add_access_record(protocol):
             print("add access record")
             print(protocol)
             sys.stdout.flush()
-            return protocol.callRemote(AddAccessRecord, user_id=user, preferred_store=SERVER_ID, is_save=True)
+            return protocol.callRemote(AddAccessRecord, user_id=user, preferred_store=SERVER_ID, is_save=True, latency_west=w_latency, latency_east=e_latency)
 
         d.addCallback(add_access_record)
 
