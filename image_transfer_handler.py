@@ -189,13 +189,15 @@ def save_image_master(image, name, user):
 def save_image_LRU_cache(image, image_name, user):
     db = connect_image_info_db()
     fs = connect_image_fs()
-
+    print "db and fs were constructed"
     if db[user].count() >= CACHE_SIZE:
+        print "cache is full, remove the least used one"
         image_info_cursor = db[user].find().sort("last_used_time",1).limit(1)
         for image_info in image_info_cursor:
             fs.delete(image_info["gridfs_uid"])
             db[user].remove(image_info["_id"])
 
+    print "putting image..."
     uid = fs.put(image)
     time = datetime.datetime.now()
     image_info = {
@@ -206,6 +208,7 @@ def save_image_LRU_cache(image, image_name, user):
         "creation_time": time,
         "views": 0
     }
+    print "saving image info..."
     db[user].save(image_info)
 
 def send_open_file(openFile, request):
