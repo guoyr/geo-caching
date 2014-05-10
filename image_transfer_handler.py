@@ -78,9 +78,8 @@ class ImageTransferResource(Resource):
                 print "sending image to non-client..."
                 d = FactoryManager().get_coordinator_client_deferred()
 
-                #add access record first, master -> client
                 def add_access_record(protocol):
-                    return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_id="", preferred_store=SERVER_ID, is_save=False, latency_key=latency, TO_KEY="other", FROM_KEY=SERVER_ID)
+                    return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_id="", preferred_store=SERVER_ID, is_save=False, latency_key=latency, to_key="other", from_key=SERVER_ID)
                 d.addCallback(add_access_record)
 
                 send_open_file(image, request)
@@ -110,7 +109,7 @@ class ImageTransferResource(Resource):
         def add_access_record(protocol):
             print("add access record")
             print(protocol)
-            return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_id=user, preferred_store=SERVER_ID, is_save=True, latency_key=latency, TO_KEY=SERVER_ID, FROM_KEY="CLIENT")
+            return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_id=user, preferred_store=SERVER_ID, is_save=True, latency_key=latency, to_key=SERVER_ID, from_key="CLIENT")
         d.addCallback(add_access_record)
 
         def check_coordinator(response):
