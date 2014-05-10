@@ -19,27 +19,50 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def onOpen(self):
         print "WebSocket connection open."
+        self.prevUserX = -95.3831
+        self.prevUserY = 29.7628
 
     def onMessage(self, payload, isBinary):
         if isBinary:
             print "Binary message received: {0} bytes".format(len(payload))
         else:
             print "Text message received: {0}".format(payload.decode('utf8'))
-        self.sendMessage(json.dumps(payload), isBinary)
+        # self.sendMessage(json.dumps(payload), isBinary)
 
     def sendLatencyInfo(self):
         print "send latency info"
         locs_dict = {"EAST":"ep","WEST":"wp","CLIENT":"user_point"}
-        
+        # hack to determine usr location
 
         from twisted.internet import reactor
 
-        callTime = 0
         for userID in LatencyCache.keys():
+            callTime = 0.0
             for from_key, to_key, latency in LatencyCache[userID]:
-                pass
+                info = {}
+                x, y = self._getUserCoords(from_key, to_key)
 
-        self.sendMessage(json.dumps(), False)
+                info[FROM_KEY] = locs_dict[from_key]
+                info[TO_KEY] = locs_dict[to_key]
+                info["latency"] = str(latency)
+                info["user_x"] = str(x)
+                info["user_y"] = str(y)
+                reactor.callLater(callTime, self.sendMessage, json.dumps(info), False)
+                callTime += latency/100
+
+    def _getUserCoords(from_key, to_key):
+        #seattle and ithaca
+        user_coords = {"WEST":[-122.3331,47.6097]. "EAST": [-76.5000, 42.4433]}
+        server = ""
+        if "CLIENT" == from_key: server = to_key elif "CLIENT" == to_key: server = from_key
+        if server:
+            x = user_coords[server][0]
+            y = user_coords[server][1]
+
+            self.prevUserY = y
+            self.prevUserX = x
+
+        return self.prevUserY, self.prevUserY
 
     def onClose(self, wasClean, code, reason):
         print "WebSocket connection closed: {0}".format(reason)

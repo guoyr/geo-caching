@@ -43,7 +43,6 @@ class FactoryManager(object):
 
 
     def start_coordinator_server(self):
-
         if not self.clientdb_server_deferred:
             from twisted.internet import reactor
             self.clientdb_server_deferred = TCP4ServerEndpoint(reactor, self.coordinator_amp_port).listen(CoordinatorFactory())
