@@ -68,8 +68,10 @@ class CoordinatorProtocol(AMP):
         
         #parse latency information
         if user_id:
-            pass
+            # user to server
+            
         else:
+            # server to server, use from_key to determine to_key
             pass
 
         return {"success": True}
