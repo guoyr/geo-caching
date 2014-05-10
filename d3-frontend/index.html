@@ -4,54 +4,54 @@
 <style>
 
 .background {
-	fill: none;
-	pointer-events: all;
+    fill: none;
+    pointer-events: all;
 }
 
 .button {
-	position: absolute;
-	fill: blue;
-	opacity: 0.5;
-	width: 60px;
-	height: 45px;
+    position: absolute;
+    fill: blue;
+    opacity: 0.5;
+    width: 60px;
+    height: 45px;
 }
 
 #states {
-	fill: #aaa;
+    fill: #aaa;
 }
 
 #state-borders {
-	fill: none;
-	stroke: #fff;
-	stroke-width: 1.5px;
-	stroke-linejoin: round;
-	stroke-linecap: round;
-	pointer-events: none;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    pointer-events: none;
 }
 
 </style>
 <body>
-	<script src="http://d3js.org/d3.v3.min.js"></script>
-	<script src="http://d3js.org/topojson.v1.min.js"></script>
-	<script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script>
 
 
-	var width = 960,
-	height = 500;
+    var width = 960,
+    height = 500;
 
-	var svg_width = width + 200;
+    var svg_width = width + 200;
 
-	var projection = d3.geo.albersUsa()
-	.scale(1070)
-	.translate([width / 2, height / 2]);
+    var projection = d3.geo.albersUsa()
+    .scale(1070)
+    .translate([width / 2, height / 2]);
 
-	var path = d3.geo.path()
-	.projection(projection);
+    var path = d3.geo.path()
+    .projection(projection);
 
-	var zoom = d3.behavior.zoom()
-	.translate(projection.translate())
-	.scale(projection.scale())
-	.scaleExtent([height, 8 * height])
+    var zoom = d3.behavior.zoom()
+    .translate(projection.translate())
+    .scale(projection.scale())
+    .scaleExtent([height, 8 * height])
     //.on("zoom", zoomed);
 
     var svg = d3.select("body").append("svg")
@@ -66,12 +66,12 @@
     var longitude = -74;
     var latitude = 40;
 
-	var user_location = projection([json_data.user_x, json_data.user_y]);
-	var user_point = svg.append("circle")
-	.attr("cx", user_location[0])
-	.attr("cy", user_location[1])
-	.attr("fill", "green")
-	.attr("r", 10);
+    var user_location = projection([json_data.user_x, json_data.user_y]);
+    var user_point = svg.append("circle")
+    .attr("cx", user_location[0])
+    .attr("cy", user_location[1])
+    .attr("fill", "green")
+    .attr("r", 10);
 
 
     g.append("rect")
@@ -95,11 +95,11 @@
             }
 
             socket.onmessage = function(e) {
-            	console.log("data information" + e.data);
-            	json_data = JSON.parse(e.data);
-            	console.log(json_data.user_x + " " + json_data.user_y);
+                console.log("data information" + e.data);
+                json_data = JSON.parse(e.data);
+                console.log(json_data.user_x + " " + json_data.user_y);
                 user_location = projection([json_data.user_x, json_data.user_y]);
-            	user_point
+                user_point
                     .transition()
                     .duration(500)
                     .attr("cx", user_location[0])
@@ -108,7 +108,7 @@
                         transfer_image(eval(json_data.from), eval(json_data.to));
                      });
 
-            	console.log("posx : " + user_point.attr("cx"));
+                console.log("posx : " + user_point.attr("cx"));
 
             }
 
@@ -120,24 +120,24 @@
          };
 
     // d3.json("latency_file.json", function(error, data) {
-    // 	if (error) return console.warn(error);
-    // 	json_data = data;
-    // 	console.log(json_data.latency + " " + json_data.timestamp);
-    // });		
+    //  if (error) return console.warn(error);
+    //  json_data = data;
+    //  console.log(json_data.latency + " " + json_data.timestamp);
+    // });      
 
     d3.json("us.json", function(error, us) {
-    	g.append("g")
-    	.attr("id", "states")
-    	.selectAll("path")
-    	.data(topojson.feature(us, us.objects.states).features)
-    	.enter().append("path")
-    	.attr("d", path)
-    	//.on("click", clicked);
+        g.append("g")
+        .attr("id", "states")
+        .selectAll("path")
+        .data(topojson.feature(us, us.objects.states).features)
+        .enter().append("path")
+        .attr("d", path)
+        //.on("click", clicked);
 
-    	g.append("path")
-    	.datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
-    	.attr("id", "state-borders")
-    	.attr("d", path);
+        g.append("path")
+        .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+        .attr("id", "state-borders")
+        .attr("d", path);
     });
 
     var offsetX = 0;
@@ -163,7 +163,7 @@
     // .attr("height",25)
     // .attr("fill", "blue")
     // .on("click", function() {
-    // 	transfer_image(json_data.from, json_data.to);
+    //  transfer_image(json_data.from, json_data.to);
     // });
 
 
@@ -174,7 +174,7 @@
     // .attr("height",25)
     // .attr("fill", "blue")
     // .on("click", function() {
-    // 	transfer_image(ep, wp);
+    //  transfer_image(ep, wp);
     // });
 
     // var blaunch = svg.append("rect")
@@ -194,68 +194,68 @@
     // .on("click", launch_server);
 
     // function launch_server() {
-    // 	console.log("launch_server() was called");
-    // 	svg.selectAll("circle").transition()
-    // 	.duration(700)
-    // 	.attr("opacity", "1");
+    //  console.log("launch_server() was called");
+    //  svg.selectAll("circle").transition()
+    //  .duration(700)
+    //  .attr("opacity", "1");
     // }
 
     var counter = 1;
 
     function transfer_image(src, dest) { 
-    	counter += 1;
-    	var currCounter = counter;
-    	var label = svg.append("text").text(json_data.east_latency)
-    	.attr("id", "image_with_lable"+counter)
-    	.attr("x", src.attr("cx"))
-    	.attr("y", src.attr("cy"))
-    	.style("opacity", 0.0)
-    	.attr("fill", "black");
-    	console.log(label.attr("id"));
+        counter += 1;
+        var currCounter = counter;
+        var label = svg.append("text").text(json_data.east_latency)
+        .attr("id", "image_with_lable"+counter)
+        .attr("x", src.attr("cx"))
+        .attr("y", src.attr("cy"))
+        .style("opacity", 0.0)
+        .attr("fill", "black");
+        console.log(label.attr("id"));
 
-    	var img = svg.append("image")
-    	.attr("id", "image_with_lable"+counter)
-    	.attr("xlink:href", "photo_icon.png")
-    	.attr("x", src.attr("cx"))
-    	.attr("y", src.attr("cy"))
-    	.attr("width", 48)
-    	.attr("height", 48)
-    	.style("opacity", 0.0);
+        var img = svg.append("image")
+        .attr("id", "image_with_lable"+counter)
+        .attr("xlink:href", "photo_icon.png")
+        .attr("x", src.attr("cx"))
+        .attr("y", src.attr("cy"))
+        .attr("width", 48)
+        .attr("height", 48)
+        .style("opacity", 0.0);
 
-    	svg.selectAll("#image_with_lable"+currCounter).transition()
-    	.duration(50)
-    	.attr("transform", "translate("+offsetX+", "+offsetY+")")
-    	.transition()
-    	.duration(500)
-    	.style("opacity", 1)
-    	.transition()
-    	.duration(json_data.east_latency*1000)
-    	.attr("transform", "translate("+(dest.attr("cx")-src.attr("cx")+offsetX)+", 						"+(dest.attr("cy")-src.attr("cy")+offsetY)+")")
-    	.transition()
-    	.duration(500)
-    	.style("opacity", 0)
-    	.each("end", function(d) {
-    		this.remove();
-    	});
+        svg.selectAll("#image_with_lable"+currCounter).transition()
+        .duration(50)
+        .attr("transform", "translate("+offsetX+", "+offsetY+")")
+        .transition()
+        .duration(500)
+        .style("opacity", 1)
+        .transition()
+        .duration(json_data.east_latency*1000)
+        .attr("transform", "translate("+(dest.attr("cx")-src.attr("cx")+offsetX)+",                         "+(dest.attr("cy")-src.attr("cy")+offsetY)+")")
+        .transition()
+        .duration(500)
+        .style("opacity", 0)
+        .each("end", function(d) {
+            this.remove();
+        });
 
     }
 
 
     function clicked(d) {
-    	var centroid = path.centroid(d),
-    	translate = projection.translate();
-    	/* translate offset update */
-    	offsetX = translate[0] - centroid[0];
-    	offsetY = translate[1] - centroid[1];
+        var centroid = path.centroid(d),
+        translate = projection.translate();
+        /* translate offset update */
+        offsetX = translate[0] - centroid[0];
+        offsetY = translate[1] - centroid[1];
 
-    	projection.translate([
-    		translate[0] - centroid[0] + width / 2,
-    		translate[1] - centroid[1] + height / 2
-    		]);
+        projection.translate([
+            translate[0] - centroid[0] + width / 2,
+            translate[1] - centroid[1] + height / 2
+            ]);
 
   // var res = zoom.translate(projection.translate());
   g.selectAll("path").transition()
-  .duration(500)	
+  .duration(500)    
   .attr("d", path);
   svg.selectAll("circle").transition()
   .duration(500)
@@ -266,8 +266,8 @@
 }
 
 function zoomed() {
-	projection.translate(d3.event.translate).scale(d3.event.scale);
-	g.selectAll("path").attr("d", path);
+    projection.translate(d3.event.translate).scale(d3.event.scale);
+    g.selectAll("path").attr("d", path);
 }
 
 </script>
