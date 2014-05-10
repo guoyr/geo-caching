@@ -74,7 +74,7 @@ class CoordinatorProtocol(AMP):
         return db
     
     def changeMaster(self, new_master, user_id):
-        return
+        return 
 
 class CoordinatorFactory(Factory):
     protocol=CoordinatorProtocol
