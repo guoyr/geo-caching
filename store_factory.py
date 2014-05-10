@@ -4,6 +4,7 @@ from twisted.web.client import Agent, readBody
 
 from store_commands import *
 from constants import *
+from utils import *
 
 class StoreProtocol(AMP):
 
