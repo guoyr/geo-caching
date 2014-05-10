@@ -106,7 +106,6 @@ class ImageTransferResource(Resource):
             print(protocol)
             sys.stdout.flush()
             return protocol.callRemote(AddAccessRecord, user_id=user, preferred_store=SERVER_ID, is_save=True, latency_west=w_latency, latency_east=e_latency)
-
         d.addCallback(add_access_record)
 
         def check_coordinator(response):

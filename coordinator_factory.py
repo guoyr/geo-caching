@@ -59,7 +59,7 @@ class CoordinatorProtocol(AMP):
                     user_record["master_access"] = 1
                     user_record["preferred_store"] = preferred_store
                     iser_record["nearest_access"] = 1
-                    self.changeMaster()
+                    #self.changeMaster()
 
                     #initiate change_master action
 
