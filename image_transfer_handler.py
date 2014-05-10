@@ -192,7 +192,7 @@ def save_image_LRU_cache(image, image_name, user):
         image_info_cursor = db[user].find().sort("last_used_time",1).limit(1)
         for image_info in image_info_cursor:
             fs.delete(image_info["gridfs_uid"])
-            db[user].delete(image_info["_id"])
+            db[user].remove(image_info["_id"])
 
     uid = fs.put(image)
     time = datetime.datetime.now()
@@ -225,6 +225,7 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
 
     d = FactoryManager().get_coordinator_client_deferred()
 
+    # cache fetch to master
     def add_access_record(protocol):
         return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key="", preferred_store=SERVER_ID, is_save=False, latency_key=300, from_key="other", to_key=SERVER_ID)
     d.addCallback(add_access_record)

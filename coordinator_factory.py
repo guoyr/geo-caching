@@ -17,6 +17,7 @@ class CoordinatorProtocol(AMP):
 
     @AddAccessRecord.responder
     def addRecord(self, image_uid_key, user_uid_key, preferred_store, is_save, latency_key, from_key, to_key):
+        # piggyback latency information here
         # if no user ID, is called by server to send latency
         print "received request"
         if user_uid_key:
@@ -65,15 +66,18 @@ class CoordinatorProtocol(AMP):
                 user_record["is_save"] = is_save
                 record_db["records"].save(user_record)
         
-        #parse latency information
+        # parse latency information
         if user_uid_key:
             # user to server
             LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
         else:
             # server to server, use from_key to determine to_key
-            if from_key == "WEST": to_key = "EAST"
+            if from_key == "EAST": 
+                to_key = "WEST" 
+            else: 
+                to_key = "EAST"
             LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
-            pass
+
         print "will return success"
         closeConnection(self.transport)
         return {"success": True}

@@ -8,14 +8,14 @@ from twisted.internet.task import LoopingCall
 
 from autobahn.twisted.websocket import WebSocketServerProtocol
 
-
+from constants import *
 
 class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def onConnect(self, request):
         print "Client connecting: {0}".format(request.peer)
-        lc = LoopingCall(self.sendLatencyInfo,None)
-        lc.start(3)
+        self.lc = LoopingCall(self.sendLatencyInfo)
+        self.lc.start(3)
 
     def onOpen(self):
         print "WebSocket connection open."
@@ -27,12 +27,19 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
             print "Text message received: {0}".format(payload.decode('utf8'))
         self.sendMessage(json.dumps(payload), isBinary)
 
-    def sendLatencyInfo(self, latency_dict):
+    def sendLatencyInfo(self):
         print "send latency info"
-        locs = ["ep","wp","user_point"]
-        random.shuffle(locs)
-        latency_dict = {"east_latency":"%.2f" % (random.random()*10+3), "user_x":str(-95.361466), "user_y":str(29.724795), "from":locs[0], "to":locs[1]}
-        self.sendMessage(json.dumps(latency_dict), False)
+        locs_dict = {"EAST":"ep","WEST":"wp","CLIENT":"user_point"}
+        
+
+        from twisted.internet import reactor
+
+        callTime = 0
+        for userID in LatencyCache.keys():
+            for from_key, to_key, latency in LatencyCache[userID]:
+
+
+        self.sendMessage(json.dumps(), False)
 
     def onClose(self, wasClean, code, reason):
         print "WebSocket connection closed: {0}".format(reason)

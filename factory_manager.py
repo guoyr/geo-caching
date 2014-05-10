@@ -24,7 +24,7 @@ class FactoryManager(object):
             self.other_server_loc = "east-5412.cloudapp.net"
         elif SERVER_ID == "EAST":
             self.other_server_loc = "west-5412.cloudapp.net"
-        elif SERVER_ID == "COORDINATOR"
+        elif SERVER_ID == "COORDINATOR":
             self.other_server_loc_1 = "west-5412.cloudapp.net"
             self.other_server_loc_2 = "east-5412.cloudapp.net"
 
@@ -43,6 +43,7 @@ class FactoryManager(object):
 
 
     def start_coordinator_server(self):
+
         if not self.clientdb_server_deferred:
             from twisted.internet import reactor
             self.clientdb_server_deferred = TCP4ServerEndpoint(reactor, self.coordinator_amp_port).listen(CoordinatorFactory())
@@ -54,6 +55,7 @@ class FactoryManager(object):
             return TCP4ClientEndpoint(reactor, self.other_server_loc, self.store_amp_port).connect(StoreFactory())
         else:
             return [TCP4ClientEndpoint(reactor, self.other_server_loc_1, self.store_amp_port).connect(StoreFactory()) , TCP4ClientEndpoint(reactor, self.other_server_loc_2, self.store_amp_port).connect(StoreFactory())]
+
     def get_coordinator_client_deferred(self):
         from twisted.internet import reactor
         return TCP4ClientEndpoint(reactor, self.client_db_loc, self.coordinator_amp_port).connect(CoordinatorFactory())
