@@ -36,13 +36,12 @@ class CoordinatorProtocol(AMP):
             record_db["records"].save(user_record)
         else:
             if(preferred_store == user_record["master"]):
+                user_record["master_access"] += 1
                 if(user_record["preferred_store"] != preferred_store):
                     user_record["preferred_store"] = preferred_store
                     user_record["nearest_access"] = 1
-                    user_record["master_access"] += 1
                 else:
                     user_record["nearest_access"] += 1
-                    user_record["master_access"] += 1
             else:
                 #is this condition happening?
                 if(user_record["preferred_store"] != preferred_store):
