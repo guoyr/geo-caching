@@ -26,5 +26,7 @@ IS_SAVE_ACTION = "is_save"
 HTTP_PORT = 8666
 HTTP_MEASUREMENT_PORT = 8888
 
+TIMEOUT = 10
+
 #LRU cache for latency
 LatencyCache = defaultdict(list)

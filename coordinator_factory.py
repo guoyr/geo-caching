@@ -1,20 +1,18 @@
 from twisted.protocols.amp import AMP
 from twisted.internet.protocol import Factory
-from coordinator_commands import *
 from pymongo import MongoClient
+
+from coordinator_commands import *
+from utils import *
 
 class CoordinatorProtocol(AMP):
 
-    @FetchData.responder
-    def fetchData(self, msg):
-        #TODO: msg contains the 
-        pass
-
     @GetMaster.responder
     def getMaster(self, user_uid_key):
-    	#TODO
+    	#TODO 
         print "received request for getMaster"
     	master_id = "WEST"
+        closeConnection(self.transport)
     	return {MASTER_SERVER_ID: master_id}
 
     @AddAccessRecord.responder
@@ -73,10 +71,13 @@ class CoordinatorProtocol(AMP):
             LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
         else:
             # server to server, use from_key to determine to_key
+            if from_key == "WEST": to_key = "EAST"
             LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
             pass
         print "will return success"
+        closeConnection(self.transport)
         return {"success": True}
+
 
     def connect_user_record_db(self):
         db = MongoClient().record_db

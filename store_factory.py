@@ -16,6 +16,7 @@ class StoreProtocol(AMP):
     def receive_image(self, user, store_name, image_name):
         from image_transfer_handler import fetch_image
         fetch_image(store_name, image_name, user, True)
+        closeConnection(self.transport)
         return {"success":True}
 
 class StoreFactory(Factory):

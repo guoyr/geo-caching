@@ -206,17 +206,26 @@
         counter += 1;
         var currCounter = counter;
         var label = svg.append("text").text(json_data.east_latency)
-        .attr("id", "image_with_lable"+counter)
+        .attr("id", "image_with_label"+counter)
         .attr("font-family", "sans-serif")
         .attr("font-size", "12px")
         .attr("x", parseInt(src.attr("cx"))+50)
-        .attr("y", parseInt(src.attr("cy"))+25)
+        .attr("y", parseInt(src.attr("cy"))+12)
         .style("opacity", 0.0)
         .attr("fill", "black");
         console.log(label.attr("id"));
 
+        var nameLabel = svg.append("text").text("image_name")
+        .attr("id", "image_with_label"+counter)
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "12px")
+        .attr("x", parseInt(src.attr("cx"))+50)
+        .attr("y", parseInt(src.attr("cy"))+36)
+        .style("opacity", 0.0)
+        .attr("fill", "black");
+
         var img = svg.append("image")
-        .attr("id", "image_with_lable"+counter)
+        .attr("id", "image_with_label"+counter)
         .attr("xlink:href", "photo_icon.png")
         .attr("x", src.attr("cx"))
         .attr("y", src.attr("cy"))
@@ -224,7 +233,7 @@
         .attr("height", 48)
         .style("opacity", 0.0);
 
-        svg.selectAll("#image_with_lable"+currCounter)
+        svg.selectAll("#image_with_label"+currCounter)
         .transition()
         .duration(200)
         .style("opacity", 0.9)
