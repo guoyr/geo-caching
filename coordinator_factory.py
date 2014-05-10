@@ -83,9 +83,10 @@ class CoordinatorProtocol(AMP):
         return db
     
     def changeMaster(self, new_master, user_uid_key):
+
         #notify the servers and prepare them for the change action
-        #
-        
+        #update the image_info db of the new master's image
+        #let the new master download all the old master's image
         return 
 
 class CoordinatorFactory(Factory):
