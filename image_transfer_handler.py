@@ -125,7 +125,7 @@ class ImageTransferResource(Resource):
                     save_image_master(image, image_name, user)
                 else:
                     print "is not master"
-                    save_image_LRU_cache(image, name, user)
+                    save_image_LRU_cache(image, image_name, user)
                     print "saved image on local cache"
                     request_master_image_download(master_id, name, user)
                     print "finish requesting"
