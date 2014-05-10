@@ -2,23 +2,23 @@ Geo-caching test cases.
 1. basic upload and download on master (yes)
 2. upload to master and download to cache (yes)
 3. mutiple upload to master and multiple request in master. (yes)
-4. LRU cache test.
+4. LRU cache test with load larger than cache size.  (yes)
+5. upload to cache and get from cache. 
 
 
 1
-http://west-5412.cloudapp.net:8666/image/image/?image_uid_key=b6d424492b710a45ccffa1dc95f0e54d&user_id=44E57086-8892-4863-8501-E2578650D6E8&is_client=1&latency_west=36.302&latency_east=146.39
+http://east-5412.cloudapp.net:8666/image/?image_uid_key=b6d424492b710a45ccffa1dc95f0e54d&user_uid_key=9F38687F-CA03-4887-8933-6EA900264263&is_client=1&latency_key=35.472
 
 2
-http://west-5412.cloudapp.net:8666/image/image/?image_uid_key=c9c07546efd96f63387aac7c1656e93a&user_id=44E57086-8892-4863-8501-E2578650D6E8&is_client=1&latency_west=23.168&latency_east=101.01
+http://east-5412.cloudapp.net:8666/image/?image_uid_key=c9c07546efd96f63387aac7c1656e93a&user_uid_key=9F38687F-CA03-4887-8933-6EA900264263&is_client=1&latency_key=31.95
 
 3
-http://west-5412.cloudapp.net:8666/image/image/?image_uid_key=84a62fb00ed16e8e6ca80d2c579edc29&user_id=44E57086-8892-4863-8501-E2578650D6E8&is_client=1&latency_west=39.178&latency_east=150.34
+http://east-5412.cloudapp.net:8666/image/?image_uid_key=84a62fb00ed16e8e6ca80d2c579edc29&user_uid_key=9F38687F-CA03-4887-8933-6EA900264263&is_client=1&latency_key=36.814
 
 4
-http://west-5412.cloudapp.net:8666/image/image/?image_uid_key=d1da623d9815ab444c5b85c94ae9fc68&user_id=44E57086-8892-4863-8501-E2578650D6E8&is_client=1&latency_west=29.948&latency_east=142.73
-
+http://east-5412.cloudapp.net:8666/image/?image_uid_key=d1da623d9815ab444c5b85c94ae9fc68&user_uid_key=9F38687F-CA03-4887-8933-6EA900264263&is_client=1&latency_key=23.342
 5
-http://west-5412.cloudapp.net:8666/image/image/?image_uid_key=17f0552c815df2c14bf4776f22300002&user_id=44E57086-8892-4863-8501-E2578650D6E8&is_client=1&latency_west=26.442&latency_east=115.06
+http://east-5412.cloudapp.net:8666/image/?image_uid_key=17f0552c815df2c14bf4776f22300002&user_uid_key=9F38687F-CA03-4887-8933-6EA900264263&is_client=1&latency_key=26.728
 
 6
-http://west-5412.cloudapp.net:8666/image/image/?image_uid_key=208bd96639a29d8b264f2d0b78fab5a7&user_id=44E57086-8892-4863-8501-E2578650D6E8&is_client=1&latency_west=24.524&latency_east=166.68
+http://east-5412.cloudapp.net:8666/image/?image_uid_key=208bd96639a29d8b264f2d0b78fab5a7&user_uid_key=9F38687F-CA03-4887-8933-6EA900264263&is_client=1&latency_key=23.098

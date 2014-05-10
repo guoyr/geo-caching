@@ -124,9 +124,11 @@ class ImageTransferResource(Resource):
                     print "is master"
                     save_image_master(image, image_name, user)
                 else:
-                    print "not master"
-                    # save_image_LRU_cache(image, name, user)
-                    # request_master_image_download(master_id, name, user)
+                    print "is not master"
+                    save_image_LRU_cache(image, name, user)
+                    print "saved image on local cache"
+                    request_master_image_download(master_id, name, user)
+                    print "finish requesting"
 
                 request.write(json.dumps(["upload complete"]))
                 request.finish()
@@ -261,6 +263,7 @@ def request_master_image_download(master_id, name, user):
     d = FactoryManager().get_store_client_deferred()
 
     def push_image(protocol):
+        print "start requesting master for downloading picture"
         return protocol.callRemote(SendSingleImageInfo, image_uid_key=name, cache_uid_key=SERVER_ID, user_uid_key=user)
 
     d.addCallback(push_image)
