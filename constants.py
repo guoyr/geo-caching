@@ -18,3 +18,6 @@ IS_SAVE_ACTION = "is_save"
 
 HTTP_PORT = 8666
 HTTP_MEASUREMENT_PORT = 8888
+
+#LRU cache for latency
+LatencyCache = []
