@@ -207,8 +207,10 @@
         var currCounter = counter;
         var label = svg.append("text").text(json_data.east_latency)
         .attr("id", "image_with_lable"+counter)
-        .attr("x", src.attr("cx"))
-        .attr("y", src.attr("cy"))
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "12px")
+        .attr("x", parseInt(src.attr("cx"))+50)
+        .attr("y", parseInt(src.attr("cy"))+25)
         .style("opacity", 0.0)
         .attr("fill", "black");
         console.log(label.attr("id"));
@@ -222,17 +224,15 @@
         .attr("height", 48)
         .style("opacity", 0.0);
 
-        svg.selectAll("#image_with_lable"+currCounter).transition()
-        .duration(50)
-        .attr("transform", "translate("+offsetX+", "+offsetY+")")
+        svg.selectAll("#image_with_lable"+currCounter)
         .transition()
-        .duration(500)
-        .style("opacity", 1)
+        .duration(200)
+        .style("opacity", 0.9)
         .transition()
         .duration(json_data.east_latency*1000)
         .attr("transform", "translate("+(dest.attr("cx")-src.attr("cx")+offsetX)+",                         "+(dest.attr("cy")-src.attr("cy")+offsetY)+")")
         .transition()
-        .duration(500)
+        .duration(200)
         .style("opacity", 0)
         .each("end", function(d) {
             this.remove();

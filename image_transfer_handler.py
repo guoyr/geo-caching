@@ -220,7 +220,6 @@ def send_open_file(openFile, request):
     dd.addErrback(err)
     dd.addCallback(cbFinished)
 
-#callback function where first argument is always the image
 def fetch_image(store_name, image_name, user, isMaster, request=None):
     print("cache trying to fetch image")
     from twisted.internet import reactor    
