@@ -21,7 +21,12 @@ class StoreProtocol(AMP):
         return {"success":True}
 
     @PrepareMasterChange.responder
-    def prepare_change(self):
+    def prepare_change(self, is_new_master, user_uid_key):
+        if(is_new_master):
+            #TODO, mark the state, and prepare to request for
+            #all the image info and the images
+        else:
+            #TODO, mark the state, and prepare for the request
         return {"prepared":True}
 
 class StoreFactory(Factory):
