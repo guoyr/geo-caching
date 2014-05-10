@@ -51,7 +51,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
                 reactor.callLater(callTime, self.sendMessage, json.dumps(info), False)
                 callTime += latency/100
 
-    def _getUserCoords(from_key, to_key):
+    def _getUserCoords(self, from_key, to_key):
         #seattle and ithaca
         user_coords = {"WEST":[-122.3331,47.6097], "EAST": [-76.5000, 42.4433]}
         server = ""
