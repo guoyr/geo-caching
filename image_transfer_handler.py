@@ -127,7 +127,7 @@ class ImageTransferResource(Resource):
                     print "is not master"
                     save_image_LRU_cache(image, image_name, user)
                     print "saved image on local cache"
-                    request_master_image_download(master_id, name, user)
+                    request_master_image_download(master_id, image_name, user)
                     print "finish requesting"
 
                 request.write(json.dumps(["upload complete"]))
