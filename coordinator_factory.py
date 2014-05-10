@@ -50,7 +50,7 @@ class CoordinatorProtocol(AMP):
                 else:
                     user_record["nearest_access"] += 1
 
-
+                '''
                 #change master should happen if this condition met
                 if(user_record["nearest_access"] > user_record["master_access"]):
                     #change the master loc
@@ -61,7 +61,7 @@ class CoordinatorProtocol(AMP):
                     #self.changeMaster()
 
                     #initiate change_master action
-
+                '''
             user_record["is_save"] = is_save
 
 
