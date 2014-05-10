@@ -42,7 +42,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
             for from_key, to_key, latency in LatencyCache[userID]:
                 info = {}
                 x, y = self._getUserCoords(from_key, to_key)
-
+                #use tokey to determine from key
                 info[FROM_KEY] = locs_dict[from_key]
                 info[TO_KEY] = locs_dict[to_key]
                 info["latency"] = str(latency)

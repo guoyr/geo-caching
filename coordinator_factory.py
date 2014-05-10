@@ -72,10 +72,10 @@ class CoordinatorProtocol(AMP):
             LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
         else:
             # server to server, use from_key to determine to_key
-            if from_key == "EAST": 
-                to_key = "WEST" 
+            if to_key == "EAST": 
+                from_key = "WEST" 
             else: 
-                to_key = "EAST"
+                from_key = "EAST"
             LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
 
         print "will return success"
