@@ -90,8 +90,8 @@ class ImageTransferResource(Resource):
         image_name = request.args[IMAGE_UID_KEY][0]
         image = request.args[image_name][0]
         user = request.args[USER_UID_KEY][0]
-        w_latency = float(request.args[CLIENT_LATENCY_WEST_KEY])
-        e_latency = float(request.args[CLIENT_LATENCY_EAST_KEY])
+        w_latency = float(request.args[CLIENT_LATENCY_WEST_KEY][0])
+        e_latency = float(request.args[CLIENT_LATENCY_EAST_KEY][0])
         #TODO: add latency for measurement
         # assume image is unique, check is on client
         # check if master
