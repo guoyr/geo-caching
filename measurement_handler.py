@@ -14,13 +14,13 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def onConnect(self, request):
         print "Client connecting: {0}".format(request.peer)
+        self.prevUserX = -95.3831
+        self.prevUserY = 29.7628
         self.lc = LoopingCall(self.sendLatencyInfo)
         self.lc.start(3)
 
     def onOpen(self):
         print "WebSocket connection open."
-        self.prevUserX = -95.3831
-        self.prevUserY = 29.7628
 
     def onMessage(self, payload, isBinary):
         if isBinary:
