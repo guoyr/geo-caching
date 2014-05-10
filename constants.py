@@ -2,9 +2,9 @@ from collections import defaultdict
 
 
 IMAGE_UID_KEY = "image_uid_key"
-USER_UID_KEY = "user_id"
+USER_UID_KEY = "user_uid_key"
 LATENCY_DICT_KEY = "latency_dict_key"
-CACHE_UID_KEY = "cache_uid"
+CACHE_UID_KEY = "cache_uid_key"
 
 MASTER_SERVER_ID = "master_server_id"
 
