@@ -69,7 +69,7 @@ class CoordinatorProtocol(AMP):
         #parse latency information
         if user_id:
             # user to server
-            
+            pass
         else:
             # server to server, use from_key to determine to_key
             pass
