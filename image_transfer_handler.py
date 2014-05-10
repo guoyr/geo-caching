@@ -32,9 +32,7 @@ class ImageTransferResource(Resource):
         image_name = request.args[IMAGE_UID_KEY][0]
         user = request.args[USER_UID_KEY][0]
         is_client = int(request.args[IS_CLIENT_KEY][0])
-        print request.args
-        w_latency = float(request.args[CLIENT_LATENCY_WEST_KEY][0])
-        e_latency = float(request.args[CLIENT_LATENCY_EAST_KEY][0])
+        latency = float(request.args[LATENCY_KEY][0])
         image = get_image(image_name, user)
         #TODO: add latency
 
@@ -43,9 +41,9 @@ class ImageTransferResource(Resource):
 
             #add access record first
             def add_access_record(protocol):
-                return protocol.callRemote(AddAccessRecord, user_id=user, preferred_store=SERVER_ID, is_save=False, latency_west=w_latency, latency_east=e_latency)
+                return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_id=user, preferred_store=SERVER_ID, is_save=False, latency=latency, to_key="CLIENT", from_key=SERVER_ID)
             d.addCallback(add_access_record)
-            sys.stdout.flush()
+
             if image:
                 #cache has image
                 #TODO: update image access time
@@ -78,9 +76,18 @@ class ImageTransferResource(Resource):
             #cache request image from master
             if image:
                 print "sending image to non-client..."
+                d = FactoryManager().get_coordinator_client_deferred()
+
+                #add access record first, master -> client
+                def add_access_record(protocol):
+                    return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_id="", preferred_store=SERVER_ID, is_save=False, latency=latency, TO_KEY="other", FROM_KEY=SERVER_ID)
+                d.addCallback(add_access_record)
+
                 send_open_file(image, request)
             else:
                 print "Error: master should always have image"
+                request.write(json.dumps(["Error: master doesn't have image"]))
+                request.finish()
 
         return NOT_DONE_YET            
 
@@ -90,9 +97,8 @@ class ImageTransferResource(Resource):
         image_name = request.args[IMAGE_UID_KEY][0]
         image = request.args[image_name][0]
         user = request.args[USER_UID_KEY][0]
-        w_latency = float(request.args[CLIENT_LATENCY_WEST_KEY][0])
-        e_latency = float(request.args[CLIENT_LATENCY_EAST_KEY][0])
-        #TODO: add latency for measurement
+        latency = float(request.args[LATENCY_KEY][0])
+
         # assume image is unique, check is on client
         # check if master
         print("image name" + image_name)
@@ -105,7 +111,7 @@ class ImageTransferResource(Resource):
             print("add access record")
             print(protocol)
             sys.stdout.flush()
-            return protocol.callRemote(AddAccessRecord, user_id=user, preferred_store=SERVER_ID, is_save=True, latency_west=w_latency, latency_east=e_latency)
+            return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_id="", preferred_store=SERVER_ID, is_save=True, latency=latency, TO_KEY=SERVER_ID, FROM_KEY="CLIENT")
         d.addCallback(add_access_record)
 
         def check_coordinator(response):
@@ -190,9 +196,10 @@ def save_image_LRU_cache(image, image_name, user):
     fs = connect_image_fs()
 
     if db[user].count() >= CACHE_SIZE:
-        image_info = db[user].find().sort("last_used_time",1).limit(1)
-        fs.delete(image_info["gridfs_uid"])
-        db[user].delete(image_info["_id"])
+        image_info_cursor = db[user].find().sort("last_used_time",1).limit(1)
+        for image_info in image_info_cursor:
+            fs.delete(image_info["gridfs_uid"])
+            db[user].delete(image_info["_id"])
 
     uid = fs.put(image)
     time = datetime.datetime.now()
@@ -226,7 +233,7 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
     agent = Agent(reactor)
     print("agent created")
     uri = "http://"+store_name+"-5412.cloudapp.net:"+str(HTTP_PORT)+"/image/"
-    args = "?%s=%s&%s=%s&%s=%d&%s=%f&%s=%f" %(IMAGE_UID_KEY, image_name, USER_UID_KEY, user, IS_CLIENT_KEY, 0, CLIENT_LATENCY_EAST_KEY, 0.1, CLIENT_LATENCY_WEST_KEY, 0.1)
+    args = "?%s=%s&%s=%s&%s=%d&%s=%f" %(IMAGE_UID_KEY, image_name, USER_UID_KEY, user, IS_CLIENT_KEY, 0, LATENCY_KEY, 300)
     d = agent.request('GET', uri+args, None, None)
     print("request made")
     def image_received(response):
