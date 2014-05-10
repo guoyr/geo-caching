@@ -267,7 +267,7 @@ def request_master_image_download(master_id, name, user):
 
     def push_image(protocol):
         print "start requesting master for downloading picture"
-        return protocol.callRemote(SendSingleImageInfo, image_uid_key=name, cache_uid_key=SERVER_ID, user_uid_key=user)
+        return protocol.callRemote(SendSingleImageInfo, cache_uid_key=SERVER_ID, user_uid_key=user, image_uid_key=name)
 
     d.addCallback(push_image)
 
