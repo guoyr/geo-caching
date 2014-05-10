@@ -11,24 +11,24 @@ class CoordinatorProtocol(AMP):
         pass
 
     @GetMaster.responder
-    def getMaster(self, user_id):
+    def getMaster(self, user_uid_key):
     	#TODO
         print "received request for getMaster"
     	master_id = "WEST"
     	return {MASTER_SERVER_ID: master_id}
 
     @AddAccessRecord.responder
-    def addRecord(self, image_uid_key, user_id, preferred_store, is_save, latency_key, from_key, to_key):
+    def addRecord(self, image_uid_key, user_uid_key, preferred_store, is_save, latency_key, from_key, to_key):
         # if no user ID, is called by server to send latency
         print "received request"
-        if user_id:
+        if user_uid_key:
             print("received request for addRecord")
             print("is_save:" + str(is_save))
             record_db = self.connect_user_record_db()
-            user_record = record_db["records"].find_one({"uid":user_id})
+            user_record = record_db["records"].find_one({"uid":user_uid_key})
             if not user_record:
                 user_record = {
-                    "uid":user_id,
+                    "uid":user_uid_key,
                     "preferred_store":preferred_store,
                     "master":preferred_store,
                     "nearest_access":1,
@@ -68,7 +68,7 @@ class CoordinatorProtocol(AMP):
                 record_db["records"].save(user_record)
         
         #parse latency information
-        if user_id:
+        if user_uid_key:
             # user to server
             pass
         else:
@@ -81,7 +81,7 @@ class CoordinatorProtocol(AMP):
         db = MongoClient().record_db
         return db
     
-    def changeMaster(self, new_master, user_id):
+    def changeMaster(self, new_master, user_uid_key):
         #notify the servers and prepare them for the change action
         #
         
