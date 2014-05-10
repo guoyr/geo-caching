@@ -40,6 +40,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
             callTime = 0.0
             print "send latency for user: "  + userID
             for from_key, to_key, latency in LatencyCache[userID]:
+                print "animation from " + from_key + "to " + to_key
                 info = {}
                 x, y = self._getUserCoords(from_key, to_key)
                 #use tokey to determine from key
