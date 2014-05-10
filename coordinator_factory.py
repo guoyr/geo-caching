@@ -66,11 +66,11 @@ class CoordinatorProtocol(AMP):
                 record_db["records"].save(user_record)
         
         # parse latency information
-
-        if to_key == "EAST": 
-            from_key = "WEST" 
-        else: 
-            from_key = "EAST"
+        if to_key != "CLIENT" and from_key != "CLIENT":
+            if to_key == "EAST": 
+                from_key = "WEST" 
+            else: 
+                from_key = "EAST"
         LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
 
         print "will return success"
