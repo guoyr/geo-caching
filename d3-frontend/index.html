@@ -67,11 +67,6 @@
     var latitude = 40;
 
     var user_location = projection([json_data.user_x, json_data.user_y]);
-    var user_point = svg.append("circle")
-    .attr("cx", user_location[0])
-    .attr("cy", user_location[1])
-    .attr("fill", "green")
-    .attr("r", 10);
 
 
     g.append("rect")
@@ -98,15 +93,26 @@
                 console.log("data information" + e.data);
                 json_data = JSON.parse(e.data);
                 console.log(json_data.user_x + " " + json_data.user_y);
-                user_location = projection([parseFloat(json_data.user_x), parseFloat(json_data.user_y)]);
-                user_point
-                    .transition()
-                    .duration(500)
+                if (json_data.user_x != "0") {
+                    var user_point = svg.append("circle")
                     .attr("cx", user_location[0])
                     .attr("cy", user_location[1])
-                    .each("end", function(){
-                        transfer_image(eval(json_data.from_key), eval(json_data.to_key));
-                     });
+                    .attr("fill", "green")
+                    .attr("r", 10);
+                    
+                    user_location = projection([parseFloat(json_data.user_x), parseFloat(json_data.user_y)]);
+                    user_point
+                        .transition()
+                        .duration(500)
+                        .attr("cx", user_location[0])
+                        .attr("cy", user_location[1])
+                        .each("end", function(){
+                            
+                         });
+                } else {
+                    transfer_image(eval(json_data.from_key), eval(json_data.to_key));
+                }
+                
 
                 console.log("posx : " + user_point.attr("cx"));
 

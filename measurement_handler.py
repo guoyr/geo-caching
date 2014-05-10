@@ -24,6 +24,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def onClose(self, wasClean, code, reason):
        print("WebSocket connection closed: {0}".format(reason))
+       self.lc.stop()
 
     def onMessage(self, payload, isBinary):
         if isBinary:
@@ -69,7 +70,9 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
             self.prevUserY = y
             self.prevUserX = x
 
-        return self.prevUserX, self.prevUserY
+            return self.prevUserX, self.prevUserY
+        else:
+            return 0, 0
 
     def onClose(self, wasClean, code, reason):
         print "WebSocket connection closed: {0}".format(reason)
