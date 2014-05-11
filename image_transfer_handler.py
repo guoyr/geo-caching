@@ -295,7 +295,7 @@ def get_image_factory():
     factory = Site(resource)
     return factory
 
-def erro_add_access_record():
+def error_add_access_record():
     print "###########################"
     print "unable to add access record"
     print "###########################"
