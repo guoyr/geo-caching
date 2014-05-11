@@ -52,7 +52,7 @@ class StoreProtocol(AMP):
         image_list = []
         db = connect_image_info_db()
         for image_info in db[user_uid_key].find():
-            image_list.append(image_info.name)
+            image_list.append(image_info["name"])
         closeConnection(self.transport)
         return {"image_info_list": image_list}
 
