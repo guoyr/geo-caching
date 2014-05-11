@@ -20,7 +20,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
         self.lc.start(3)
 
     def onOpen(self):
-        print "WebSocket connection open."
+        print bcolors.WARNING + "WebSocket connection open." + bcolors.ENDC
 
     def onMessage(self, payload, isBinary):
         if isBinary:
