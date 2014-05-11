@@ -25,8 +25,10 @@ class StoreProtocol(AMP):
         if(is_new_master):
             #TODO, mark the state, and prepare to request for
             #all the image info and the images
+            pass
         else:
             #TODO, mark the state, and prepare for the request
+            pass
         return {"prepared":True}
 
 class StoreFactory(Factory):
