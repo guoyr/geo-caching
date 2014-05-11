@@ -6,6 +6,7 @@ import json
 import datetime
 
 from pymongo import MongoClient
+from pymongo import errors
 import gridfs
 
 from twisted.web.resource import Resource
