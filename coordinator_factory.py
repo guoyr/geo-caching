@@ -88,7 +88,7 @@ class CoordinatorProtocol(AMP):
         def notify_new_master(protocol):
             return protocol.callRemote(InitiateMasterChange, user_uid_key=user, old_master_key=old_master)
 
-        d.addCallBack(notify_new_master)
+        d.addCallback(notify_new_master)
         #TODO: add errback, if cache not available, revert master change
 
 class CoordinatorFactory(Factory):
