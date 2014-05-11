@@ -97,7 +97,9 @@
                         user_point = svg.append("circle")
                             .attr("cx", user_location[0])
                             .attr("cy", user_location[1])
-                            .attr("fill", "green")
+                            .attr("fill", function() {
+                                return "hsl(" + Math.random() * 360 + ",100%,50%)";
+                            })
                             .attr("r", 10);
                         users[json.user_id] = user_point;
                     } else {
