@@ -46,7 +46,7 @@ class StoreProtocol(AMP):
             print_header("start fetching images: " + str(images_remaining))
             # get list of images
             for image_info in image_info_list:
-                fetch_image(old_master_key, image_info["name"], user_uid_key, True, callback=fetched_image)
+                fetch_image(old_master_key, image_info, user_uid_key, True, callback=fetched_image)
 
         d.addCallback(fetch_all_images)
         closeConnection(self.transport)
