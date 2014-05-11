@@ -123,7 +123,16 @@ class ImageTransferResource(Resource):
         
         def get_master(protocol):
             return protocol.callRemote(GetMaster, user_uid_key=user, preferred_store=SERVER_ID)
-        d.addCallback(get_master)
+
+        def err_post_master_handler(failure):
+            print "###########################"
+            print "unable to post master"
+            print "###########################"
+            # raise errors.ConnectionFailure
+            failure.trap(errors.ConnectionFailure)
+            # return "<html>Error! Unable to get master from clientdb</html>"
+
+        d.addCallback(get_master).addErrback(err_post_master_handler)
 
         def parse_master_id(response):
             print("parse master_id")
