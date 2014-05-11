@@ -88,14 +88,10 @@
                 var json_data = JSON.parse(e.data);
                 console.log("data information" + json_data);
 
-                var user_point;
-
-                src = eval(json_data.from_key);
-                dest = eval(json_data.to_key)
 
                 if (json_data.user_x != "0") {
 
-                    user_location = projection([parseFloat(json_data.user_x), parseFloat(json_data.user_y)]);
+                    var user_location = projection([parseFloat(json_data.user_x), parseFloat(json_data.user_y)]);
 
 
                     if (!(json_data.user_id in users)) {
@@ -115,7 +111,7 @@
 
                     if (user_point.attr("cx") == user_location[0]) {
                         //user didn't move
-                        transfer_image(src, dest, json_data);
+                        transfer_image(eval(json_data.from_key),eval(json_data.to_key), json_data);
                     } else {
                         // user moved
                         user_point
@@ -124,12 +120,12 @@
                             .attr("cx", user_location[0])
                             .attr("cy", user_location[1])
                             .each("end", function(){
-                                transfer_image(src, dest, json_data);
+                                transfer_image(eval(json_data.from_key),eval(json_data.to_key), json_data);
                              });
                     }
 
                 } else {
-                    transfer_image(src, dest, json_data);
+                    transfer_image(eval(json_data.from_key),eval(json_data.to_key), json_data);
                 }
             }
 
