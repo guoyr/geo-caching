@@ -5,8 +5,6 @@ sys.path.insert(0, "../")
 import json
 
 
-from pymongo import errors
-
 from twisted.web.resource import Resource
 from twisted.web.server import Site, NOT_DONE_YET
 from twisted.python.log import err
@@ -75,6 +73,7 @@ class ImageTransferResource(Resource):
                         print "###########################"
                         print "unable to get master"
                         print "###########################"
+                        failure.trap(Exception)
                         # return "<html>Error! Unable to get master from clientdb</html>"
 
                     d.addCallback(c).addErrback(err_get_master_handler)
