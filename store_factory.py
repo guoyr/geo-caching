@@ -18,11 +18,12 @@ class StoreProtocol(AMP):
     @InitiateMasterChange.responder
     def become_master(self, user_uid_key, old_master_key):
         # ask for list of images
+
         from factory_manager import FactoryManager
         d = FactoryManager().get_store_client_deferred()
 
         def get_image_list(protocol):
-            protocol.callRemote(SendAllImages, user_uid_key=user_uid_key)
+            return protocol.callRemote(SendAllImages, user_uid_key=user_uid_key)
         d.addCallback(get_image_list)
 
         def fetch_all_images(response):
