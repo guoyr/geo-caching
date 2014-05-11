@@ -50,7 +50,7 @@ class ImageTransferResource(Resource):
 
             if image:
                 #cache has image
-                print_log("cache has image, now sending to client")
+                print_log("store has image, now sending to client")
                 send_open_file(image, request)
             else:
                 d = FactoryManager().get_coordinator_client_deferred()
@@ -139,13 +139,8 @@ class ImageTransferResource(Resource):
             request.write(json.dumps(["upload complete"]))
             request.finish()
 
-        def err_get_master_handler(failure):
-            print_fail("unable to get master")
-            request_write_error_finish(request, "Internal error, please try again later")
+        d.addCallback(parse_master_id)
 
-        d.addCallback(parse_master_id).addErrback(err_get_master_handler)
-
-        return NOT_DONE_YET
 
 # IMAGE METHODS
 def get_image(name,user):
