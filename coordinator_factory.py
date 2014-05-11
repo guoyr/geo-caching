@@ -1,6 +1,7 @@
 from twisted.protocols.amp import AMP
 from twisted.internet.protocol import Factory
 from pymongo import MongoClient
+from pymongo import errors
 
 from coordinator_commands import *
 from utils import *
