@@ -293,7 +293,7 @@ def get_image_factory():
     resource = Resource()
     resource.putChild('image', ImageTransferResource())
     factory = Site(resource)
-return factory
+    return factory
 
 def erro_add_access_record():
     print "###########################"
