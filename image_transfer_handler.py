@@ -42,7 +42,14 @@ class ImageTransferResource(Resource):
             #add access record first
             def add_access_record(protocol):
                 return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, is_save=False, latency_key=latency, to_key="CLIENT", from_key=SERVER_ID)
-            d.addErrback(err_add_access_record)
+            
+
+            def err_add_access_record_handler(failure):
+                print "###########################"
+                print "unable to add access record"
+                print "###########################"
+
+            d.addErrback(err_add_access_record_handler)
             d.addCallback(add_access_record)
 
             if image:
@@ -236,12 +243,12 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
     def add_access_record(protocol):
         return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, is_save=False, latency_key=SERVER_LATENCY, from_key="other", to_key=SERVER_ID)
     
-    def erro_add_access_record():
+    def err_add_access_record_handler(failure):
         print "###########################"
         print "unable to add access record"
         print "###########################"
 
-    d.addErrback(err_add_access_record)
+    d.addErrback(err_add_access_record_handler)
     d.addCallback(add_access_record)
 
     from twisted.internet import reactor    
@@ -294,12 +301,5 @@ def get_image_factory():
     resource.putChild('image', ImageTransferResource())
     factory = Site(resource)
     return factory
-
-def err_add_access_record():
-    print "###########################"
-    print "unable to add access record"
-    print "###########################"
-
-
 
 
