@@ -51,7 +51,7 @@ class StoreProtocol(AMP):
     def return_list_of_image(self, user_uid_key):
         image_list = []
         db = connect_image_info_db()
-        for image_info in db[user].find():
+        for image_info in db[user_uid_key].find():
             image_list.append(image_info.name)
         closeConnection(self.transport)
         return {"image_info_list": image_list}
@@ -61,10 +61,10 @@ class StoreProtocol(AMP):
         #remove all images for user in this cache
         db = connect_image_info_db()
         fs = connect_image_fs()
-        image_info_cursor = db[user].find()
+        image_info_cursor = db[user_uid_key].find()
         for image_info in image_info_cursor:
             fs.delete(image_info["gridfs_uid"])
-            db[user].remove(image_info["_id"])
+            db[user_uid_key].remove(image_info["_id"])
         closeConnection(self.transport)
         return {"success": True}
 
