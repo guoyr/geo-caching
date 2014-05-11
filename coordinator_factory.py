@@ -73,7 +73,7 @@ class CoordinatorProtocol(AMP):
                 from_key = "WEST" 
             else: 
                 from_key = "EAST"
-        LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
+        LatencyCache[user_uid_key].append([from_key, to_key, latency_key, image_uid_key])
 
         closeConnection(self.transport)
         return {"success": True}

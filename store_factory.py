@@ -35,13 +35,13 @@ class StoreProtocol(AMP):
             images_remaining = [len(image_info_list)]
             def fetched_image():
                 images_remaining[0] -= 1
-                if images_remaining == 0:
+                if images_remaining[0] == 0:
                     # tell old master finish transfer
                     from factory_manager import FactoryManager
                     d = FactoryManager().get_store_client_deferred()
                     def send_done(protocol):
                         print_header("fetched all images")
-                        protocol.callRemote(FinishMasterTransfer, user_uid_key=user_uid_key)
+                        return protocol.callRemote(FinishMasterTransfer, user_uid_key=user_uid_key)
                     d.addCallback(send_done)
 
             print_header("start fetching images: " + str(images_remaining))
