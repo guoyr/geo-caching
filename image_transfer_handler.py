@@ -107,6 +107,7 @@ class ImageTransferResource(Resource):
 
         def err_post_master_handler(failure):
             print_fail("Can't get master")
+            request_write_error_finish(request, "can't get master")
 
         d.addCallback(get_master).addErrback(err_post_master_handler)
 
@@ -138,8 +139,13 @@ class ImageTransferResource(Resource):
             request.write(json.dumps(["upload complete"]))
             request.finish()
 
-        d.addCallback(parse_master_id)
+        def err_get_master_handler(failure):
+            print_fail("unable to get master")
+            request_write_error_finish(request, "Internal error, please try again later")
 
+        d.addCallback(parse_master_id).addErrback(err_get_master_handler)
+
+        return NOT_DONE_YET
 
 # IMAGE METHODS
 def get_image(name,user):

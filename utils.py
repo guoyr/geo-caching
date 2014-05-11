@@ -96,4 +96,3 @@ def save_image_LRU_cache(image, image_name, user):
 
 def request_write_error_finish(request, err):
     request.write(json.dumps({"Error":err}))
-    request.finish()
