@@ -13,7 +13,7 @@ class CoordinatorProtocol(AMP):
         record_db = connect_user_record_db()
         user_record = record_db["records"].find_one({"uid":user_uid_key})
         if user_record:
-            master_id = user_record["master"]
+            master_id = str(user_record["master"])
         else:
         	master_id = preferred_store
         

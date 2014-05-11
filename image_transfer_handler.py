@@ -75,8 +75,6 @@ class ImageTransferResource(Resource):
                         print "###########################"
                         print "unable to get master"
                         print "###########################"
-                        # raise errors.ConnectionFailure
-                        failure.trap(errors.ConnectionFailure)
                         # return "<html>Error! Unable to get master from clientdb</html>"
 
                     d.addCallback(c).addErrback(err_get_master_handler)
@@ -127,8 +125,6 @@ class ImageTransferResource(Resource):
             print "###########################"
             print "unable to post master"
             print "###########################"
-            # raise errors.ConnectionFailure
-            failure.trap(errors.ConnectionFailure)
             # return "<html>Error! Unable to get master from clientdb</html>"
 
         d.addCallback(get_master).addErrback(err_post_master_handler)
