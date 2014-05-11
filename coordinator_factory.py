@@ -3,6 +3,7 @@ from twisted.internet.protocol import Factory
 
 from constants import *
 from coordinator_commands import *
+from store_commands import *
 from utils import *
 
 class CoordinatorProtocol(AMP):
