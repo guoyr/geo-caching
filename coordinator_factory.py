@@ -83,7 +83,7 @@ class CoordinatorProtocol(AMP):
         print "initiating change master"
         from factory_manager import FactoryManager
         #get two deferred for each server
-        d = FactoryManager.get_store_client_deferred(serverIDToServer(new_master))
+        d = FactoryManager().get_store_client_deferred(serverIDToServer(new_master))
 
         def notify_new_master(protocol):
             return protocol.callRemote(InitiateMasterChange, user_uid_key=user, old_master_key=old_master)
