@@ -1,5 +1,6 @@
 from twisted.protocols.amp import AMP
 from twisted.internet.protocol import Factory
+from pymongo import errors
 
 from coordinator_commands import *
 from utils import *
@@ -8,6 +9,7 @@ class CoordinatorProtocol(AMP):
 
     @GetMaster.responder
     def getMaster(self, user_uid_key, preferred_store):
+        raise errors.ConnectionFailure
         print "received request for getMaster"
         record_db = connect_user_record_db()
         user_record = record_db["records"].find_one({"uid":user_uid_key})
