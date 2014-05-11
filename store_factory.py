@@ -31,9 +31,10 @@ class StoreProtocol(AMP):
             print_header("received list of images from old master")
             from image_transfer_handler import fetch_image
             image_info_list = response["image_info_list"]
-            images_remaining = len(image_info_list)
+            # http://stackoverflow.com/questions/8934772/
+            images_remaining = [len(image_info_list)]
             def fetched_image():
-                images_remaining -= 1
+                images_remaining[0] -= 1
                 if images_remaining == 0:
                     # tell old master finish transfer
                     from factory_manager import FactoryManager
