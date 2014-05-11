@@ -50,7 +50,6 @@ def save_image_master(image, name, user, callback=None, *args, **kwargs):
         "views":0
     }
     db[user].save(image_info)
-    print ("image stored in master: " +  SERVER_ID)
     callback(*args, **kwargs)
 
 def save_image_LRU_cache(image, image_name, user):

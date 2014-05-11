@@ -99,6 +99,7 @@
 
                     var user_point;
                     if (!(json_data.user_id in users)) {
+                        // create new user point
                         user_point = svg.append("circle")
                             .attr("cx", user_location[0])
                             .attr("cy", user_location[1])
@@ -106,18 +107,25 @@
                             .attr("r", 10);
                         users[json.user_id] = user_point;
                     } else {
+                        // use existing usr poitn
                         user_point = users[json_data.user_id]
                     }
 
+                    if (user_point.attr("cx") == user_location[0]) {
+                        //user didn't move
+                        transfer_image(eval(json_data.from_key), eval(json_data.to_key));
+                    } else {
+                        // user moved
+                        user_point
+                            .transition()
+                            .duration(500)
+                            .attr("cx", user_location[0])
+                            .attr("cy", user_location[1])
+                            .each("end", function(){
+                                transfer_image(eval(json_data.from_key), eval(json_data.to_key));
+                             });
+                    }
 
-                    user_point
-                        .transition()
-                        .duration(500)
-                        .attr("cx", user_location[0])
-                        .attr("cy", user_location[1])
-                        .each("end", function(){
-                            transfer_image(eval(json_data.from_key), eval(json_data.to_key));
-                         });
                 } else {
                     transfer_image(eval(json_data.from_key), eval(json_data.to_key));
                 }
