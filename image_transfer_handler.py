@@ -7,7 +7,6 @@ import datetime
 
 
 from pymongo import errors
-import gridfs
 
 from twisted.web.resource import Resource
 from twisted.web.server import Site, NOT_DONE_YET
