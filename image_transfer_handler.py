@@ -80,8 +80,7 @@ class ImageTransferResource(Resource):
                         failure.trap(errors.ConnectionFailure)
                         # return "<html>Error! Unable to get master from clientdb</html>"
 
-                    d.addErrback(err_get_master_handler)
-                    d.addCallback(c)
+                    d.addCallback(c).addErrback(err_get_master_handler)
 
                     def parse_master_id(response):
                         print("cache parse master id")
@@ -119,45 +118,41 @@ class ImageTransferResource(Resource):
         print("image name" + image_name)
         print("user" + user)
 
+        #add_image_rec
+        print("check coordinator")
+        print(type(response))
+        d = FactoryManager().get_coordinator_client_deferred()
         
+        def get_master(protocol):
+            return protocol.callRemote(GetMaster, user_uid_key=user, preferred_store=SERVER_ID)
+        d.addCallback(get_master)
 
-        def check_coordinator(response):
-            #add_image_rec
-            print("check coordinator")
-            print(type(response))
+        def parse_master_id(response):
+            print("parse master_id")
+            master_id = response[MASTER_SERVER_ID]
+            if master_id == SERVER_ID:
+                print "is master"
+                save_image_master(image, image_name, user)
+            else:
+                print "is not master"
+                save_image_LRU_cache(image, image_name, user)
+                print "saved image on local cache"
+                request_master_image_download(master_id, image_name, user)
+                print "finish requesting"
+
             d = FactoryManager().get_coordinator_client_deferred()
-            
-            def get_master(protocol):
-                return protocol.callRemote(GetMaster, user_uid_key=user, preferred_store=SERVER_ID)
-            d.addCallback(get_master)
+            #add the record last because we need to save image to master first
+            def add_access_record(protocol):
+                print("add access record")
+                print(protocol)
+                return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, latency_key=latency, to_key=SERVER_ID, from_key="CLIENT")
+            d.addCallback(add_access_record)
 
-            def parse_master_id(response):
-                print("parse master_id")
-                master_id = response[MASTER_SERVER_ID]
-                if master_id == SERVER_ID:
-                    print "is master"
-                    save_image_master(image, image_name, user)
-                else:
-                    print "is not master"
-                    save_image_LRU_cache(image, image_name, user)
-                    print "saved image on local cache"
-                    request_master_image_download(master_id, image_name, user)
-                    print "finish requesting"
+            request.write(json.dumps(["upload complete"]))
+            request.finish()
 
-                d = FactoryManager().get_coordinator_client_deferred()
-                #add the record last because we need to save image to master first
-                def add_access_record(protocol):
-                    print("add access record")
-                    print(protocol)
-                    return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, latency_key=latency, to_key=SERVER_ID, from_key="CLIENT")
-                d.addCallback(add_access_record)
+        d.addCallback(parse_master_id)
 
-                request.write(json.dumps(["upload complete"]))
-                request.finish()
-
-            d.addCallback(parse_master_id)
-
-        d.addCallback(check_coordinator)
 
         # call done at end of save_image
         return NOT_DONE_YET
