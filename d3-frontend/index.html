@@ -101,7 +101,7 @@
                                 return "hsl(" + Math.random() * 360 + ",100%,50%)";
                             })
                             .attr("r", 10);
-                        users[json.user_id] = user_point;
+                        users[json_data.user_id] = user_point;
                     } else {
                         // use existing usr poitn
                         user_point = users[json_data.user_id]
@@ -170,50 +170,6 @@
     .attr("r", 10)
     .attr("opacity", 0.9)
     .style("fill", "steelblue");
-
-    // var wp_to_ep_move = svg.append("rect")
-    // .attr("x", width+50)
-    // .attr("y", height/8)
-    // .attr("width", 50)
-    // .attr("height",25)
-    // .attr("fill", "blue")
-    // .on("click", function() {
-    //  transfer_image(json_data.from, json_data.to);
-    // });
-
-
-    // var ep_to_wp_move = svg.append("rect")
-    // .attr("x", width+50)
-    // .attr("y", height/8+60)
-    // .attr("width", 50)
-    // .attr("height",25)
-    // .attr("fill", "blue")
-    // .on("click", function() {
-    //  transfer_image(ep, wp);
-    // });
-
-    // var blaunch = svg.append("rect")
-    // .attr("class", "button")
-    // .attr("x", width+50)
-    // .attr("y", height/8 + 120)
-    // .attr("width", 55)
-    // .attr("height",25)
-    // .attr("rx", 5)
-    // .attr("ry", 5)
-    // .on("click", launch_server);
-
-    // svg.append("text").text("Launch")
-    // .attr("x", blaunch.attr("x")*1.005)
-    // .attr("y", blaunch.attr("y")*1.12)
-    // .attr("fill", "black")
-    // .on("click", launch_server);
-
-    // function launch_server() {
-    //  console.log("launch_server() was called");
-    //  svg.selectAll("circle").transition()
-    //  .duration(700)
-    //  .attr("opacity", "1");
-    // }
 
     var counter = 1;
 
