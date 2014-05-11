@@ -60,6 +60,7 @@ class ImageTransferResource(Resource):
             
                     def c(protocol):
                         return protocol.callRemote(GetMaster, user_uid_key=user)
+                    d.addErrback(err_get_master)
                     d.addCallback(c)
 
                     def parse_master_id(response):
@@ -233,6 +234,13 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
     # cache fetch to master
     def add_access_record(protocol):
         return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, is_save=False, latency_key=SERVER_LATENCY, from_key="other", to_key=SERVER_ID)
+    
+    def erro_add_access_recor():
+        print "###########################"
+        print "unable to add access record"
+        print "###########################"
+
+    d.addErrback(err_add_access_record)
     d.addCallback(add_access_record)
 
     from twisted.internet import reactor    
