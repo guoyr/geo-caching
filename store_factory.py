@@ -44,7 +44,7 @@ class StoreProtocol(AMP):
                 fetch_image(old_master_key, image_info["name"], user_uid_key, True, callback=fetched_image)
 
         d.addCallback(fetch_all_images)
-
+        closeConnection(self.transport)
         return {"ack":True}
 
     @SendAllImages.responder
@@ -53,6 +53,7 @@ class StoreProtocol(AMP):
         db = connect_image_info_db()
         for image_info in db[user].find():
             image_list.append(image_info.name)
+        closeConnection(self.transport)
         return {"image_info_list": image_list}
 
     @FinishMasterTransfer.responder
@@ -64,6 +65,7 @@ class StoreProtocol(AMP):
         for image_info in image_info_cursor:
             fs.delete(image_info["gridfs_uid"])
             db[user].remove(image_info["_id"])
+        closeConnection(self.transport)
         return {"success": True}
 
 class StoreFactory(Factory):
