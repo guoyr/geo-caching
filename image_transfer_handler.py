@@ -245,9 +245,13 @@ def fetch_image(store_name, image_name, user, isMaster, request=None, callback=N
             send_open_file(serving_image, request)
 
 
+    def err_parse_iamge_handler(failure):
+        print "###########################"
+        print "unable to parse image from store"
+        print "###########################"
 
     d.addCallback(image_received)
-    d.addErrback()
+    d.addErrback(err_parse_iamge_handler)
 
 def request_master_image_download(master_id, name, user):
     d = FactoryManager().get_store_client_deferred()
