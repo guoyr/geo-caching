@@ -47,7 +47,7 @@ def connect_user_record_db():
     db = MongoClient().record_db
     return db
 
-def save_image_master(image, name, user, callback=None, *args, **kwargs):
+def save_image_master(image, name, user, callback=None):
     print("saving to master")
     # I am the master, save the image to master collection without the cache size limitation
     db = connect_image_info_db()
@@ -65,7 +65,7 @@ def save_image_master(image, name, user, callback=None, *args, **kwargs):
     }
     db[user].save(image_info)
     if callback:
-        callback(*args, **kwargs)
+        callback()
 
 def save_image_LRU_cache(image, image_name, user):
     db = connect_image_info_db()

@@ -198,7 +198,7 @@ def send_open_file(openFile, request):
     dd.addErrback(err)
     dd.addCallback(cbFinished)
 
-def fetch_image(store_name, image_name, user, isMaster, request=None, callback=None, *args, **kwargs):
+def fetch_image(store_name, image_name, user, isMaster, request=None, callback=None):
     #cache trying to fetch image from master
     print("cache trying to fetch image from master")
 
@@ -235,7 +235,7 @@ def fetch_image(store_name, image_name, user, isMaster, request=None, callback=N
     def cbBody(image):
         if isMaster:
             #image retrieved from cache
-            save_image_master(image, image_name, user, callback, *args, **kwargs)
+            save_image_master(image, image_name, user, callback)
         else:
             #image requested by client and retrieved from master
             #save image
