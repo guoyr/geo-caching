@@ -1,5 +1,4 @@
 from twisted.protocols import amp
-from pymongo import errors
 
 from constants import *
 
@@ -14,4 +13,3 @@ class AddAccessRecord(amp.Command):
 class GetMaster(amp.Command):
     arguments = [(USER_UID_KEY,amp.String()), (PREFERRED_STORE_KEY, amp.String())]
     response = [(MASTER_SERVER_ID,amp.String())]
-    errors = {errors.ConnectionFailure: 'DB_CONNECTION_ERROR'}
