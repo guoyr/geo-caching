@@ -50,7 +50,8 @@ def save_image_master(image, name, user, callback=None, *args, **kwargs):
         "views":0
     }
     db[user].save(image_info)
-    callback(*args, **kwargs)
+    if callback:
+        callback(*args, **kwargs)
 
 def save_image_LRU_cache(image, image_name, user):
     db = connect_image_info_db()

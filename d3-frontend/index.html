@@ -61,14 +61,9 @@
     var g = svg.append("g")
     .call(zoom);
     
-    var json_data = {"latency" : 3.82, "from": "ep", "to": "wp", "user_x" : -74, "user_y" : 40};
-
-    var longitude = -74;
-    var latitude = 40;
-
-    var user_location = projection([json_data.user_x, json_data.user_y]);
 
     var users = {};
+
     g.append("rect")
     .attr("class", "background")
     .attr("width", width)
@@ -90,9 +85,8 @@
             }
 
             socket.onmessage = function(e) {
-                console.log("data information" + e.data);
                 json_data = JSON.parse(e.data);
-                console.log(json_data.user_x + " " + json_data.user_y);
+                console.log("data information" + json_data);
                 if (json_data.user_x != "0") {
 
                     user_location = projection([parseFloat(json_data.user_x), parseFloat(json_data.user_y)]);
