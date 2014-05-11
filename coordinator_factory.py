@@ -10,7 +10,7 @@ class CoordinatorProtocol(AMP):
 
     @GetMaster.responder
     def getMaster(self, user_uid_key, preferred_store):
-        print "received request for getMaster"
+        print_header("received request for getMaster")
         record_db = connect_user_record_db()
         user_record = record_db["records"].find_one({"uid":user_uid_key})
         if user_record:
@@ -25,9 +25,9 @@ class CoordinatorProtocol(AMP):
     @AddAccessRecord.responder
     def addRecord(self, image_uid_key, user_uid_key, preferred_store, latency_key, from_key, to_key):
         # piggyback latency information here, use from, to to determine where called by server
-        print "received request for add record"
+        print_header("received request for add record")
         if to_key == "CLIENT" or from_key=="CLIENT":
-            print("received request for addRecord")
+            print_header("received request for addRecord")
             record_db = connect_user_record_db()
             user_record = record_db["records"].find_one({"uid":user_uid_key})
             if not user_record:
@@ -75,13 +75,12 @@ class CoordinatorProtocol(AMP):
                 from_key = "EAST"
         LatencyCache[user_uid_key].append([from_key, to_key, latency_key])
 
-        print "will return success"
         closeConnection(self.transport)
         return {"success": True}
 
     
     def changeMaster(self, new_master, old_master, user):
-        print "initiating change master"
+        print_header("initiating change master")
         from factory_manager import FactoryManager
         #get two deferred for each server
         d = FactoryManager().get_store_client_deferred(serverIDToServer(new_master))

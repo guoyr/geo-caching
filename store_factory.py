@@ -18,15 +18,17 @@ class StoreProtocol(AMP):
     @InitiateMasterChange.responder
     def become_master(self, user_uid_key, old_master_key):
         # ask for list of images
-
+        print_header("received request to become master")
         from factory_manager import FactoryManager
         d = FactoryManager().get_store_client_deferred()
 
         def get_image_list(protocol):
+            print_header("getting list of images from old master")
             return protocol.callRemote(SendAllImages, user_uid_key=user_uid_key)
         d.addCallback(get_image_list)
 
         def fetch_all_images(response):
+            print_header("received list of images from old master")
             from image_transfer_handler import fetch_image
             image_info_list = response["image_info_list"]
             images_remaining = len(image_info_list)
@@ -37,9 +39,11 @@ class StoreProtocol(AMP):
                     from factory_manager import FactoryManager
                     d = FactoryManager().get_store_client_deferred()
                     def send_done(protocol):
+                        print_header("fetched all images")
                         protocol.callRemote(FinishMasterTransfer, user_uid_key=user_uid_key)
                     d.addCallback(send_done)
 
+            print_header("start fetching images: " + str(images_remaining))
             # get list of images
             for image_info in image_info_list:
                 fetch_image(old_master_key, image_info["name"], user_uid_key, True, callback=fetched_image)
@@ -50,6 +54,7 @@ class StoreProtocol(AMP):
 
     @SendAllImages.responder
     def return_list_of_image(self, user_uid_key):
+        print_header("received request to get list of images")
         image_list = []
         db = connect_image_info_db()
         for image_info in db[user_uid_key].find():
@@ -60,6 +65,7 @@ class StoreProtocol(AMP):
     @FinishMasterTransfer.responder
     def ack_finish_transfer(self, user_uid_key):
         #remove all images for user in this cache
+        print_header("received request to finish master transfer, removing local images")
         db = connect_image_info_db()
         fs = connect_image_fs()
         image_info_cursor = db[user_uid_key].find()
