@@ -50,6 +50,7 @@ class ImageTransferResource(Resource):
                 print "unable to add access record"
                 print "###########################"
                 raise errors.ConnectionFailure
+                return "<html>Error! Unable to add access record</html>"
 
             d.addErrback(err_add_access_record_handler)
             d.addCallback(add_access_record)
@@ -249,6 +250,7 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
         print "###########################"
         print "unable to add access record"
         print "###########################"
+        return "<html>Error! Unable to add access record</html>"
         raise errors.ConnectionFailure
 
     d.addErrback(err_add_access_record_handler)
