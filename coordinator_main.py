@@ -27,7 +27,7 @@ def main():
 
     FactoryManager().start_coordinator_server()
 
-    log.startLogging(sys.stdout)
+    # log.startLogging(sys.stdout)
     reactor.run()
 
 if __name__ == '__main__':
