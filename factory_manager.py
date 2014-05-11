@@ -19,14 +19,13 @@ class FactoryManager(object):
 
     def __init__(self):
         self.client_db_loc = "clientdb-5412.cloudapp.net"
-
+        
+        self.store_server_loc = ""
         if SERVER_ID == "WEST":
-            self.other_server_loc = "east-5412.cloudapp.net"
+            self.store_server_loc = "east-5412.cloudapp.net"
         elif SERVER_ID == "EAST":
-            self.other_server_loc = "west-5412.cloudapp.net"
-        elif SERVER_ID == "COORDINATOR":
-            self.other_server_loc_1 = "west-5412.cloudapp.net"
-            self.other_server_loc_2 = "east-5412.cloudapp.net"
+            self.store_server_loc = "west-5412.cloudapp.net"
+
 
         self.store_amp_port = 8750
         self.coordinator_amp_port = 8760
@@ -48,12 +47,12 @@ class FactoryManager(object):
             self.clientdb_server_deferred = TCP4ServerEndpoint(reactor, self.coordinator_amp_port).listen(CoordinatorFactory())
         return self.clientdb_server_deferred
 
-    def get_store_client_deferred(self):
+    def get_store_client_deferred(self, server_location=None):
         from twisted.internet import reactor
-        if(SERVER_ID != "COORDINATOR"):
-            return TCP4ClientEndpoint(reactor, self.other_server_loc, self.store_amp_port).connect(StoreFactory())
+        if self.store_server_loc:
+            return TCP4ClientEndpoint(reactor, self.store_server_loc, self.store_amp_port).connect(StoreFactory())
         else:
-            return [TCP4ClientEndpoint(reactor, self.other_server_loc_1, self.store_amp_port).connect(StoreFactory()) , TCP4ClientEndpoint(reactor, self.other_server_loc_2, self.store_amp_port).connect(StoreFactory())]
+            return TCP4ClientEndpoint(reactor, server_location, self.store_amp_port).connect(StoreFactory())
 
     def get_coordinator_client_deferred(self):
         from twisted.internet import reactor

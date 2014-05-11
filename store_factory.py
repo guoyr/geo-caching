@@ -8,11 +8,6 @@ from utils import *
 
 class StoreProtocol(AMP):
 
-    @Transfer.responder
-    def transfer(self, msg):
-        #TODO: retrieve the file
-        return {"msg": "server received msg"}
-
     @SendSingleImageInfo.responder
     def receive_image(self, user_uid_key, cache_uid_key, image_uid_key):
         from image_transfer_handler import fetch_image
@@ -20,16 +15,56 @@ class StoreProtocol(AMP):
         closeConnection(self.transport)
         return {"success":True}
 
-    @PrepareMasterChange.responder
-    def prepare_change(self, is_new_master, user_uid_key):
-        if(is_new_master):
-            #TODO, mark the state, and prepare to request for
-            #all the image info and the images
-            pass
-        else:
-            #TODO, mark the state, and prepare for the request
-            pass
-        return {"prepared":True}
+    @InitiateMasterChange.responder
+    def become_master(self, user_uid_key, old_master_key):
+        # ask for list of images
+        from factory_manager import FactoryManager
+        d = FactoryManager().get_store_client_deferred()
+
+        def get_image_list(protocol):
+            protocol.callRemote(SendAllImages, user_uid_key=user_uid_key)
+        d.addCallback(get_image_list)
+
+        def fetch_all_images(response):
+            from image_transfer_handler import fetch_image
+            image_info_list = response["image_info_list"]
+            images_remaining = len(image_info_list)
+            def fetched_image():
+                images_remaining -= 1
+                if images_remaining == 0:
+                    # tell old master finish transfer
+                    from factory_manager import FactoryManager
+                    d = FactoryManager().get_store_client_deferred()
+                    def send_done(protocol):
+                        protocol.callRemote(FinishMasterTransfer, user_uid_key=user_uid_key)
+                    d.addCallback(send_done)
+
+            # get list of images
+            for image_info in image_info_list:
+                fetch_image(old_master_key, image_info["name"], user_uid_key, True, callback=fetched_image)
+
+        d.addCallback(fetch_all_images)
+
+        return {"ack":True}
+
+    @SendAllImages.responder
+    def return_list_of_image(self, user_uid_key):
+        image_list = []
+        db = connect_image_info_db()
+        for image_info in db[user].find():
+            image_list.append(image_info.name)
+        return {"image_info_list": image_list}
+
+    @FinishMasterTransfer.responder
+    def ack_finish_transfer(self, user_uid_key):
+        #remove all images for user in this cache
+        db = connect_image_info_db()
+        fs = connect_image_fs()
+        image_info_cursor = db[user].find()
+        for image_info in image_info_cursor:
+            fs.delete(image_info["gridfs_uid"])
+            db[user].remove(image_info["_id"])
+        return {"success": True}
 
 class StoreFactory(Factory):
     protocol=StoreProtocol

@@ -1,7 +1,5 @@
 from twisted.protocols.amp import AMP
 from twisted.internet.protocol import Factory
-from pymongo import MongoClient
-from pymongo import errors
 
 from coordinator_commands import *
 from utils import *
@@ -9,61 +7,62 @@ from utils import *
 class CoordinatorProtocol(AMP):
 
     @GetMaster.responder
-    def getMaster(self, user_uid_key):
-    	#TODO 
+    def getMaster(self, user_uid_key, preferred_store):
         print "received request for getMaster"
-    	master_id = "WEST"
+        record_db = connect_user_record_db()
+        user_record = record_db["records"].find_one({"uid":user_uid_key})
+        if user_record:
+            master_id = user_record["master"]
+        else:
+        	master_id = preferred_store
+        
         closeConnection(self.transport)
+
     	return {MASTER_SERVER_ID: master_id}
 
     @AddAccessRecord.responder
-    def addRecord(self, image_uid_key, user_uid_key, preferred_store, is_save, latency_key, from_key, to_key):
+    def addRecord(self, image_uid_key, user_uid_key, preferred_store, latency_key, from_key, to_key):
         # piggyback latency information here, use from, to to determine where called by server
         print "received request for add record"
         if to_key == "CLIENT" or from_key=="CLIENT":
             print("received request for addRecord")
-            print("is_save:" + str(is_save))
-            record_db = self.connect_user_record_db()
+            record_db = connect_user_record_db()
             user_record = record_db["records"].find_one({"uid":user_uid_key})
             if not user_record:
                 user_record = {
                     "uid":user_uid_key,
                     "preferred_store":preferred_store,
                     "master":preferred_store,
-                    "nearest_access":1,
-                    "master_access":1,
-                    "is_save":is_save
+                    "preferred_store_access_count":1,
+                    "master_access_count":1
                 }
                 record_db["records"].save(user_record)
             else:
                 if(preferred_store == user_record["master"]):
-                    user_record["master_access"] += 1
+                    user_record["master_access_count"] += 1
                     if(user_record["preferred_store"] != preferred_store):
                         user_record["preferred_store"] = preferred_store
-                        user_record["nearest_access"] = 1
+                        user_record["preferred_store_access_count"] = 1
                     else:
-                        user_record["nearest_access"] += 1
+                        user_record["preferred_store_access_count"] += 1
                 else:
-                    #is this condition happening?
+                    #if there are more than 1 cache
                     if(user_record["preferred_store"] != preferred_store):
                         user_record["preferred_store"] = preferred_store
-                        user_record["nearest_access"] = 1
+                        user_record["preferred_store_access_count"] = 1
                     else:
-                        user_record["nearest_access"] += 1
+                        user_record["preferred_store_access_count"] += 1
 
-                    '''
                     #change master should happen if this condition met
-                    if(user_record["nearest_access"] > user_record["master_access"]):
+                    if(user_record["preferred_store_access_count"] > user_record["master_access_count"]):
                         #change the master loc
-                        user_record["master"] =  preferred_store
-                        user_record["master_access"] = 1
-                        user_record["preferred_store"] = preferred_store
-                        iser_record["nearest_access"] = 1
-                        #self.changeMaster()
+                        self.changeMaster(preferred_store, user_record["master"], user_uid_key)
 
-                        #initiate change_master action
-                    '''
-                user_record["is_save"] = is_save
+                        user_record["master"] =  preferred_store
+                        user_record["master_access_count"] = 1
+                        user_record["preferred_store"] = preferred_store
+                        iser_record["preferred_store_access_count"] = 1
+
                 record_db["records"].save(user_record)
         
         # parse latency information
@@ -78,25 +77,18 @@ class CoordinatorProtocol(AMP):
         closeConnection(self.transport)
         return {"success": True}
 
-
-    def connect_user_record_db(self):
-        db = MongoClient().record_db
-        return db
     
-    def changeMaster(self, old_master, new_master, user):
-
-        #notify the servers and prepare them for the change action
-        #update the image_info db of the new master's image
-        #let the new master download all the old master's image
+    def changeMaster(self, new_master, old_master, user):
+        print "initiating change master"
         from factory_manager import FactoryManager
         #get two deferred for each server
-        d_lsit = FactoryManager.get_store_client_deferred()
+        d = FactoryManager.get_store_client_deferred(serverIDToServer(new_master))
 
-        def notify_new_master(prtocol):
-            return protocol.callRemote(PrepareMasterChange, is_new_master=True, user_uid_key=user)
-        
-        def notify_old_master(protocol):
-            return protocol.callRemote(PrepareMasterChange, is_new_master=False, user_uid_key=user)
+        def notify_new_master(protocol):
+            return protocol.callRemote(InitiateMasterChange, user_uid_key=user, old_master_key=old_master)
+
+        d.addCallBack(notify_new_master)
+        #TODO: add errback, if cache not available, revert master change
 
 class CoordinatorFactory(Factory):
     protocol=CoordinatorProtocol

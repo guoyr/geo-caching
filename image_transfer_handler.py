@@ -5,7 +5,7 @@ sys.path.insert(0, "../")
 import json
 import datetime
 
-from pymongo import MongoClient
+
 from pymongo import errors
 import gridfs
 
@@ -20,6 +20,7 @@ from store_commands import *
 from factory_manager import FactoryManager
 from settings import *
 from constants import *
+from utils import *
 from twisted.web.client import Agent, readBody
 
 CACHE_SIZE = 5
@@ -42,7 +43,7 @@ class ImageTransferResource(Resource):
 
             #add access record first
             def add_access_record(protocol):
-                return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, is_save=False, latency_key=latency, to_key="CLIENT", from_key=SERVER_ID)
+                return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, latency_key=latency, to_key="CLIENT", from_key=SERVER_ID)
             
 
             # def err_add_access_record_handler(failure):
@@ -70,7 +71,7 @@ class ImageTransferResource(Resource):
                     d = FactoryManager().get_coordinator_client_deferred()
             
                     def c(protocol):
-                        return protocol.callRemote(GetMaster, user_uid_key=user)
+                        return protocol.callRemote(GetMaster, user_uid_key=user, preferred_store=SERVER_ID)
                     
                     def err_get_master_handler(failure):
                         print "###########################"
@@ -117,15 +118,8 @@ class ImageTransferResource(Resource):
         # check if master
         print("image name" + image_name)
         print("user" + user)
-        d = FactoryManager().get_coordinator_client_deferred()
-        print("get deferred")
 
-        #add the record first
-        def add_access_record(protocol):
-            print("add access record")
-            print(protocol)
-            return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, is_save=True, latency_key=latency, to_key=SERVER_ID, from_key="CLIENT")
-        d.addCallback(add_access_record)
+        
 
         def check_coordinator(response):
             #add_image_rec
@@ -133,9 +127,9 @@ class ImageTransferResource(Resource):
             print(type(response))
             d = FactoryManager().get_coordinator_client_deferred()
             
-            def c(protocol):
-                return protocol.callRemote(GetMaster, user_uid_key=user)
-            d.addCallback(c)
+            def get_master(protocol):
+                return protocol.callRemote(GetMaster, user_uid_key=user, preferred_store=SERVER_ID)
+            d.addCallback(get_master)
 
             def parse_master_id(response):
                 print("parse master_id")
@@ -149,6 +143,14 @@ class ImageTransferResource(Resource):
                     print "saved image on local cache"
                     request_master_image_download(master_id, image_name, user)
                     print "finish requesting"
+
+                d = FactoryManager().get_coordinator_client_deferred()
+                #add the record last because we need to save image to master first
+                def add_access_record(protocol):
+                    print("add access record")
+                    print(protocol)
+                    return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, latency_key=latency, to_key=SERVER_ID, from_key="CLIENT")
+                d.addCallback(add_access_record)
 
                 request.write(json.dumps(["upload complete"]))
                 request.finish()
@@ -188,49 +190,6 @@ def get_image(name,user):
 
 # HELPER METHODS
 
-def save_image_master(image, name, user):
-    # I am the master, save the image to master collection without the cache size limitation
-    db = connect_image_info_db()
-    fs = connect_image_fs()
-
-    uid = fs.put(image)
-    time = datetime.datetime.now()
-    image_info = {
-        "name":name,
-        "gridfs_uid":uid,
-        "user_uid":user,
-        "last_used_time":time,
-        "creation_time":time,
-        "views":0
-    }
-    db[user].save(image_info)
-    print ("image stored in master: " +  SERVER_ID)
-
-def save_image_LRU_cache(image, image_name, user):
-    db = connect_image_info_db()
-    fs = connect_image_fs()
-    print "db and fs were constructed"
-    if db[user].count() >= CACHE_SIZE:
-        print "cache is full, remove the least used one"
-        image_info_cursor = db[user].find().sort("last_used_time",1).limit(1)
-        for image_info in image_info_cursor:
-            fs.delete(image_info["gridfs_uid"])
-            db[user].remove(image_info["_id"])
-
-    print "putting image..."
-    uid = fs.put(image)
-    time = datetime.datetime.now()
-    image_info = {
-        "name":image_name,
-        "gridfs_uid":uid,
-        "user_uid": user,
-        "last_used_time": time,
-        "creation_time": time,
-        "views": 0
-    }
-    print "saving image info..."
-    db[user].save(image_info)
-
 def send_open_file(openFile, request):
     '''Use FileSender to asynchronously send an open file
 
@@ -245,15 +204,16 @@ def send_open_file(openFile, request):
     dd.addErrback(err)
     dd.addCallback(cbFinished)
 
-def fetch_image(store_name, image_name, user, isMaster, request=None):
+def fetch_image(store_name, image_name, user, isMaster, request=None, callback=None, *args, **kwargs):
+    #cache trying to fetch image from master
     print("cache trying to fetch image from master")
 
     d = FactoryManager().get_coordinator_client_deferred()
 
     # cache fetch to master
     def add_access_record(protocol):
-        return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, is_save=False, latency_key=SERVER_LATENCY, from_key="other", to_key=SERVER_ID)
-    
+        return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, latency_key=SERVER_LATENCY, from_key="other", to_key=SERVER_ID)
+
     # def err_add_access_record_handler(failure):
     #     print "###########################"
     #     print "unable to add access record"
@@ -262,12 +222,13 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
     #     raise errors.ConnectionFailure
 
     ## d.addErrback(err_add_access_record_handler)
+
     d.addCallback(add_access_record)
 
     from twisted.internet import reactor    
     agent = Agent(reactor)
     print("agent created")
-    uri = "http://"+store_name+"-5412.cloudapp.net:"+str(HTTP_PORT)+"/image/"
+    uri = "http://"+store_name.lower()+"-5412.cloudapp.net:"+str(HTTP_PORT)+"/image/"
     args = "?%s=%s&%s=%s&%s=%d&%s=%f" %(IMAGE_UID_KEY, image_name, USER_UID_KEY, user, IS_CLIENT_KEY, 0, LATENCY_KEY, SERVER_LATENCY)
     d = agent.request('GET', uri+args, None, None)
     print("request made")
@@ -280,7 +241,7 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
     def cbBody(image):
         if isMaster:
             #image retrieved from cache
-            save_image_master(image, image_name, user)
+            save_image_master(image, image_name, user, callback, *args, **kwargs)
         else:
             #image requested by client and retrieved from master
             #save image
@@ -289,7 +250,10 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
             serving_image = get_image(image_name, user)
             send_open_file(serving_image, request)
 
+
+
     d.addCallback(image_received)
+    d.addErrback()
 
 def request_master_image_download(master_id, name, user):
     d = FactoryManager().get_store_client_deferred()
@@ -299,15 +263,6 @@ def request_master_image_download(master_id, name, user):
         return protocol.callRemote(SendSingleImageInfo, cache_uid_key=SERVER_ID, user_uid_key=user, image_uid_key=name)
 
     d.addCallback(push_image)
-
-def connect_image_fs():
-    db = MongoClient().image_db
-    fs = gridfs.GridFS(db)
-    return fs
-
-def connect_image_info_db():
-    db = MongoClient().image_info_db
-    return db
 
 def get_image_factory():
     resource = Resource()
