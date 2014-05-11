@@ -16,7 +16,7 @@ class CoordinatorProtocol(AMP):
         if user_record:
             master_id = str(user_record["master"])
         else:
-        	master_id = preferred_store
+        	master_id = str(preferred_store)
         
         closeConnection(self.transport)
 
