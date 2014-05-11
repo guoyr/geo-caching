@@ -107,7 +107,6 @@ class ImageTransferResource(Resource):
 
         def err_post_master_handler(failure):
             print_fail("Can't get master")
-            request_write_error_finish(request, "can't get master")
 
         d.addCallback(get_master).addErrback(err_post_master_handler)
 
