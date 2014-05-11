@@ -19,8 +19,6 @@ from constants import *
 from utils import *
 from twisted.web.client import Agent, readBody
 
-CACHE_SIZE = 5
-
 class ImageTransferResource(Resource):
     isLeaf = True
 

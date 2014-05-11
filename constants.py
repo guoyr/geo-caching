@@ -29,9 +29,10 @@ IS_NEW_MASTER = "is_new_master"
 HTTP_PORT = 8666
 HTTP_MEASUREMENT_PORT = 8888
 
-
 TIMEOUT = 10
 SERVER_LATENCY = 90
+
+CACHE_SIZE = 5
 
 #LRU cache for latency
 LatencyCache = defaultdict(list)
