@@ -33,6 +33,7 @@ def connect_user_record_db():
     return db
 
 def save_image_master(image, name, user, callback=None, *args, **kwargs):
+    print("saving to master")
     # I am the master, save the image to master collection without the cache size limitation
     db = connect_image_info_db()
     fs = connect_image_fs()
