@@ -6,19 +6,19 @@ import gridfs
 from constants import *
 
 def print_header(msg):
-    print bcolors.HEADER + header + bcolors.ENDC
+    print bcolors.HEADER + msg + bcolors.ENDC
 
 def print_okblue(msg):
-    print bcolors.OKBLUE + header + bcolors.ENDC
+    print bcolors.OKBLUE + msg + bcolors.ENDC
 
 def print_okgreen(msg):
-    print bcolors.OKGREEN + header + bcolors.ENDC
+    print bcolors.OKGREEN + msg + bcolors.ENDC
 
 def print_warning(msg):
-    print bcolors.WARNING + header + bcolors.ENDC
+    print bcolors.WARNING + msg + bcolors.ENDC
 
 def print_fail(msg):
-    print bcolors.FAIL + header + bcolors.ENDC
+    print bcolors.FAIL + msg + bcolors.ENDC
 
 def closeConnection(conn):
     from twisted.internet import reactor
