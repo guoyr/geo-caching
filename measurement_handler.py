@@ -22,10 +22,6 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
     def onOpen(self):
         print "WebSocket connection open."
 
-    def onClose(self, wasClean, code, reason):
-       print("WebSocket connection closed: {0}".format(reason))
-       self.lc.stop()
-
     def onMessage(self, payload, isBinary):
         if isBinary:
             print "Binary message received: {0} bytes".format(len(payload))

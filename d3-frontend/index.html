@@ -74,7 +74,11 @@
     .attr("width", width)
     .attr("height", height);
 
-
+    var user_point = svg.append("circle")
+        .attr("cx", user_location[0])
+        .attr("cy", user_location[1])
+        .attr("fill", "green")
+        .attr("r", 10);
 
     var socket = null;
     var isopen = false;
@@ -94,11 +98,7 @@
                 json_data = JSON.parse(e.data);
                 console.log(json_data.user_x + " " + json_data.user_y);
                 if (json_data.user_x != "0") {
-                    var user_point = svg.append("circle")
-                    .attr("cx", user_location[0])
-                    .attr("cy", user_location[1])
-                    .attr("fill", "green")
-                    .attr("r", 10);
+
 
                     user_location = projection([parseFloat(json_data.user_x), parseFloat(json_data.user_y)]);
                     user_point
