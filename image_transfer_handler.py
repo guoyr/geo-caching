@@ -42,6 +42,7 @@ class ImageTransferResource(Resource):
             #add access record first
             def add_access_record(protocol):
                 return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, is_save=False, latency_key=latency, to_key="CLIENT", from_key=SERVER_ID)
+            d.addErrback(err_add_access_record)
             d.addCallback(add_access_record)
 
             if image:
@@ -60,7 +61,7 @@ class ImageTransferResource(Resource):
             
                     def c(protocol):
                         return protocol.callRemote(GetMaster, user_uid_key=user)
-                    d.addErrback(err_get_master)
+                    #d.addErrback(err_get_master)
                     d.addCallback(c)
 
                     def parse_master_id(response):
@@ -235,7 +236,7 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
     def add_access_record(protocol):
         return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, is_save=False, latency_key=SERVER_LATENCY, from_key="other", to_key=SERVER_ID)
     
-    def erro_add_access_recor():
+    def erro_add_access_record():
         print "###########################"
         print "unable to add access record"
         print "###########################"
@@ -292,7 +293,12 @@ def get_image_factory():
     resource = Resource()
     resource.putChild('image', ImageTransferResource())
     factory = Site(resource)
-    return factory
+return factory
+
+def erro_add_access_record():
+    print "###########################"
+    print "unable to add access record"
+    print "###########################"
 
 
 
