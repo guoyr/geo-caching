@@ -45,12 +45,12 @@ class ImageTransferResource(Resource):
                 return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, is_save=False, latency_key=latency, to_key="CLIENT", from_key=SERVER_ID)
             
 
-            def err_add_access_record_handler(failure):
-                print "###########################"
-                print "unable to add access record"
-                print "###########################"
-                raise errors.ConnectionFailure
-                return "<html>Error! Unable to add access record</html>"
+            # def err_add_access_record_handler(failure):
+            #     print "###########################"
+            #     print "unable to add access record"
+            #     print "###########################"
+            #     raise errors.ConnectionFailure
+            #     return "<html>Error! Unable to add access record</html>"
 
             d.addErrback(err_add_access_record_handler)
             d.addCallback(add_access_record)
@@ -72,12 +72,12 @@ class ImageTransferResource(Resource):
                     def c(protocol):
                         return protocol.callRemote(GetMaster, user_uid_key=user)
                     
-                    # def err_get_master_handler(failure):
-                    #     print "###########################"
-                    #     print "unable to add access record"
-                    #     print "###########################"
-                    #     raise errors.ConnectionFailure
-                    #     return "<html>Error! Unable to get master from clientdb</html>"
+                    def err_get_master_handler(failure):
+                        print "###########################"
+                        print "unable to add access record"
+                        print "###########################"
+                        raise errors.ConnectionFailure
+                        return "<html>Error! Unable to get master from clientdb</html>"
                         
                     d.addErrback(err_get_master_handler)
                     d.addCallback(c)
