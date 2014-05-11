@@ -119,8 +119,6 @@ class ImageTransferResource(Resource):
         print("user" + user)
 
         #add_image_rec
-        print("check coordinator")
-        print(type(response))
         d = FactoryManager().get_coordinator_client_deferred()
         
         def get_master(protocol):
