@@ -1,6 +1,7 @@
 from twisted.protocols.amp import AMP
 from twisted.internet.protocol import Factory
 from twisted.web.client import Agent, readBody
+from twisted.python.log import err
 
 from store_commands import *
 from constants import *
@@ -10,6 +11,7 @@ class StoreProtocol(AMP):
 
     @SendSingleImageInfo.responder
     def receive_image(self, user_uid_key, cache_uid_key, image_uid_key):
+        print_header("getting image from cache")
         from image_transfer_handler import fetch_image
         fetch_image(cache_uid_key, image_uid_key, user_uid_key, True)
         closeConnection(self.transport)
@@ -23,16 +25,16 @@ class StoreProtocol(AMP):
         d = FactoryManager().get_store_client_deferred()
 
         def get_image_list(protocol):
-            print_header("getting list of images from old master")
             return protocol.callRemote(SendAllImages, user_uid_key=user_uid_key)
-        d.addCallback(get_image_list)
+        d.addCallback(get_image_list).addErrback(err)
 
         def fetch_all_images(response):
-            print_header("received list of images from old master")
+            print_okblue("received list of images from old master")
             from image_transfer_handler import fetch_image
             image_info_list = response["image_info_list"]
             # http://stackoverflow.com/questions/8934772/
             images_remaining = [len(image_info_list)]
+
             def fetched_image():
                 images_remaining[0] -= 1
                 if images_remaining[0] == 0:
@@ -40,16 +42,16 @@ class StoreProtocol(AMP):
                     from factory_manager import FactoryManager
                     d = FactoryManager().get_store_client_deferred()
                     def send_done(protocol):
-                        print_header("fetched all images")
+                        print_log("fetched all images")
                         return protocol.callRemote(FinishMasterTransfer, user_uid_key=user_uid_key)
                     d.addCallback(send_done)
 
-            print_header("start fetching images: " + str(images_remaining))
+            print_log("start fetching " + str(images_remaining) + " number of images")
             # get list of images
             for image_info in image_info_list:
                 fetch_image(old_master_key, image_info, user_uid_key, True, callback=fetched_image)
 
-        d.addCallback(fetch_all_images)
+        d.addCallback(fetch_all_images).addErrback(err)
         closeConnection(self.transport)
         return {"ack":True}
 

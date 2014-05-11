@@ -1,6 +1,5 @@
 #handles image transfers
 import json
-import random
 
 from twisted.web.resource import Resource
 from twisted.web.server import Site
@@ -9,18 +8,17 @@ from twisted.internet.task import LoopingCall
 from autobahn.twisted.websocket import WebSocketServerProtocol
 
 from constants import *
-
+from utils import *
 class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
     def onConnect(self, request):
-        print "Client connecting: {0}".format(request.peer)
         self.prevUserX = -95.3831
         self.prevUserY = 29.7628
         self.lc = LoopingCall(self.sendLatencyInfo)
         self.lc.start(3)
 
     def onOpen(self):
-        print bcolors.WARNING + "WebSocket connection open." + bcolors.ENDC
+        print_okblue("Client opened new connection")
 
     def onMessage(self, payload, isBinary):
         if isBinary:
@@ -37,9 +35,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
 
         for userID in LatencyCache.keys():
             callTime = 0.1
-            print "send latency for user: "  + userID
             for from_key, to_key, latency, img_name in LatencyCache[userID]:
-                print "animation from " + from_key + "to " + to_key + "latency " + str(latency)
                 info = {}
                 x, y = self._getUserCoords(from_key, to_key)
                 #use tokey to determine from key
@@ -55,7 +51,6 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
         LatencyCache.clear()
 
     def sendM(self, *args, **kwargs):
-        print "calling sendmessage"
         self.sendMessage(*args, **kwargs)
 
     def _getUserCoords(self, from_key, to_key):
@@ -77,7 +72,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
             return 0, 0
 
     def onClose(self, wasClean, code, reason):
-        print "WebSocket connection closed: {0}".format(reason)
+        print_okgreen("WebSocket connection closed: {0}".format(reason))
 
 class MeasurementResource(Resource):
     isLeaf = True
@@ -85,13 +80,11 @@ class MeasurementResource(Resource):
     def render_GET(self, request):
         request.setHeader("content-type", "application/json")
         result = {"east_latency":"1.004", "west_latency":"2.056", "user_location_x":""}
-        print "measurement get"
         return json.dumps([result])
 
     def render_POST(self, request):
         request.setHeader("content-type", "application/json")
         result = {"east_latency":"1.004", "west_latency":"2.056"}
-        print "measurement post"
         return json.dumps(result)
 
 def get_measurement_factory():
