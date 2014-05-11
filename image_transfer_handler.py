@@ -52,7 +52,7 @@ class ImageTransferResource(Resource):
             #     raise errors.ConnectionFailure
             #     return "<html>Error! Unable to add access record</html>"
 
-            #d.addErrback(err_add_access_record_handler)
+            ## d.addErrback(err_add_access_record_handler)
             d.addCallback(add_access_record)
 
             if image:
@@ -261,7 +261,7 @@ def fetch_image(store_name, image_name, user, isMaster, request=None):
     #     return "<html>Error! Unable to add access record</html>"
     #     raise errors.ConnectionFailure
 
-    #d.addErrback(err_add_access_record_handler)
+    ## d.addErrback(err_add_access_record_handler)
     d.addCallback(add_access_record)
 
     from twisted.internet import reactor    
