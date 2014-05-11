@@ -75,9 +75,10 @@ class ImageTransferResource(Resource):
                     
                     def err_get_master_handler(failure):
                         print "###########################"
-                        print "unable to add access record"
+                        print "unable to get master"
                         print "###########################"
-                        raise errors.ConnectionFailure
+                        # raise errors.ConnectionFailure
+                        failure.trap(errors.ConnectionFailure)
                         return "<html>Error! Unable to get master from clientdb</html>"
 
                     d.addErrback(err_get_master_handler)
