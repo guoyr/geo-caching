@@ -62,7 +62,7 @@ class CoordinatorProtocol(AMP):
                         user_record["master"] =  preferred_store
                         user_record["master_access_count"] = 1
                         user_record["preferred_store"] = preferred_store
-                        iser_record["preferred_store_access_count"] = 1
+                        user_record["preferred_store_access_count"] = 1
 
                 record_db["records"].save(user_record)
         
