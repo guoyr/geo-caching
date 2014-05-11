@@ -78,7 +78,7 @@ class ImageTransferResource(Resource):
                         print "###########################"
                         # raise errors.ConnectionFailure
                         failure.trap(errors.ConnectionFailure)
-                        return "<html>Error! Unable to get master from clientdb</html>"
+                        # return "<html>Error! Unable to get master from clientdb</html>"
 
                     d.addErrback(err_get_master_handler)
                     d.addCallback(c)
