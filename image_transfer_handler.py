@@ -71,7 +71,14 @@ class ImageTransferResource(Resource):
             
                     def c(protocol):
                         return protocol.callRemote(GetMaster, user_uid_key=user)
-                    #d.addErrback(err_get_master)
+                    
+                    def err_get_master_handler(failure):
+                        print "###########################"
+                        print "unable to add access record"
+                        print "###########################"
+                        raise errors.ConnectionFailure
+                        return "<html>Error! Unable to get master from clientdb</html>"
+                    d.addErrback(err_get_master_handler)
                     d.addCallback(c)
 
                     def parse_master_id(response):
