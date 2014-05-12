@@ -125,8 +125,6 @@ class ImageTransferResource(Resource):
 
             #add the record last because we need to save image to master first
             def add_access_record(protocol):
-                print("add access record")
-                print(protocol)
                 return protocol.callRemote(AddAccessRecord, image_uid_key=image_name,user_uid_key=user, preferred_store=SERVER_ID, latency_key=latency, to_key=SERVER_ID, from_key="CLIENT")
 
             def err_add_access_record_handler(failure):
@@ -173,7 +171,6 @@ def send_open_file(openFile, request):
     '''Use FileSender to asynchronously send an open file
 
     [JBY] From: http://stackoverflow.com/questions/1538617/http-download-very-big-file'''
-    print("starting trasnferring file...")
     dd = FileSender().beginFileTransfer(openFile, request)
 
     def cbFinished(ignored):
@@ -184,7 +181,7 @@ def send_open_file(openFile, request):
 
 def fetch_image(store_name, image_name, user, isMaster, request=None, callback=None):
     #cache trying to fetch image from master
-    print("cache trying to fetch image from master")
+    print_log("cache trying to fetch image from master")
 
     d = FactoryManager().get_coordinator_client_deferred()
 
