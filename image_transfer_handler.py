@@ -56,7 +56,7 @@ class ImageTransferResource(Resource):
             else:
                 d = FactoryManager().get_coordinator_client_deferred()
                 #image doesn't exist on cache, try get it on master
-                print_log("cache doesn't have image trying to get from master")
+                print_log("cache doesn't have image, querying coordinator for master")
                 def check_coordinator(protocol):
 
                     #add_image_rec
