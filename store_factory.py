@@ -48,8 +48,12 @@ class StoreProtocol(AMP):
 
             print_log("start fetching " + str(images_remaining) + " number of images")
             # get list of images
+            timeout = 0.1
+            from twisted.internet import reactor    
             for image_info in image_info_list:
-                fetch_image(old_master_key, image_info, user_uid_key, True, callback=fetched_image)
+                reactor.callLater(timeout, fetch_image, old_master_key, image_info, user_uid_key, True, callback=fetched_image)
+                timeout += 0.1
+
 
         d.addCallback(fetch_all_images).addErrback(err)
         closeConnection(self.transport)
