@@ -21,7 +21,7 @@ def main():
     FactoryManager().start_store_server()
 
     # TODO: listen to HTTP and AMP server
-    # log.startLogging(sys.stdout)
+    log.startLogging(sys.stdout)
     reactor.run()
 
 
