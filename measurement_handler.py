@@ -15,7 +15,7 @@ class LatencyMeasurementProtocol(WebSocketServerProtocol):
         self.prevUserX = -95.3831
         self.prevUserY = 29.7628
         self.lc = LoopingCall(self.sendLatencyInfo)
-        self.lc.start(3)
+        self.lc.start(2)
 
     def onOpen(self):
         print_okblue("Client opened new connection")
