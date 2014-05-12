@@ -23,7 +23,6 @@ class ImageTransferResource(Resource):
     isLeaf = True
 
     def render_GET(self, request):
-        print_log("GET request from client")
         request.setHeader("content-type", "image/jpeg")
         if (len(request.args) < 2): return NoResource()
         image_name = request.args[IMAGE_UID_KEY][0]
@@ -33,6 +32,8 @@ class ImageTransferResource(Resource):
         image = get_image(image_name, user)
 
         if is_client:
+            print_log("GET request from client")
+
             d = FactoryManager().get_coordinator_client_deferred()
 
             #add access record first
