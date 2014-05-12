@@ -25,9 +25,8 @@ class CoordinatorProtocol(AMP):
     @AddAccessRecord.responder
     def addRecord(self, image_uid_key, user_uid_key, preferred_store, latency_key, from_key, to_key):
         # piggyback latency information here, use from, to to determine where called by server
-        print_header("received request for add record")
         if to_key == "CLIENT" or from_key=="CLIENT":
-            print_header("received request for addRecord")
+            print_header("received request for add record from client")
             record_db = connect_user_record_db()
             user_record = record_db["records"].find_one({"uid":user_uid_key})
             if not user_record:
