@@ -19,6 +19,7 @@ def print_warning(msg):
     print bcolors.WARNING + msg + bcolors.ENDC
 
 def print_fail(msg):
+    return
     print bcolors.FAIL + msg + bcolors.ENDC
 
 def print_log(msg):
