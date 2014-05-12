@@ -203,6 +203,7 @@ def fetch_image(store_name, image_name, user, isMaster, request=None, callback=N
     args = "?%s=%s&%s=%s&%s=%d&%s=%f" %(IMAGE_UID_KEY, image_name, USER_UID_KEY, user, IS_CLIENT_KEY, 0, LATENCY_KEY, SERVER_LATENCY)
     d = agent.request('GET', uri+args, None, None)
     print_log("GET: " + uri+args)
+
     def cbBody(image):
         if isMaster:
             #image retrieved from cache
@@ -221,6 +222,9 @@ def fetch_image(store_name, image_name, user, isMaster, request=None, callback=N
     def image_received(response):
         d = readBody(response)
         d.addCallback(cbBody).addErrback(err_parse_image_handler)
+
+    d.addCallback(image_received)
+    d.addErrback(err)
 
 def request_master_image_download(master_id, name, user):
     d = FactoryManager().get_store_client_deferred()
